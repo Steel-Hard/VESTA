@@ -1,100 +1,126 @@
+
+# ![Imagem de Capa](assets/steelhard-logo-prototype.jpg)
+
 <div align="center">
-  <img src="./documents/labw_logo.png">
+<h1>
+<a href="#descrição">Descrição</a> || 
+<a href="#tecnologias">Tecnologias</a> || 
+<a href="#dev-team">Dev Team</a> || 
+<a href="#product-backlog">Product Backlog</a> || 
+<a href="#scrum">Scrum</a> || 
+<a href="#instalação">Instalação</a> || 
+<a href="public/docs/ABP_VESTA.pdf">Diretrizes</a>
+</h1>
 </div>
 
+## 📝 Descrição
+<img src="assets/vesta-logo.jpg" min-width="400px" max-width="400px" width="400px" align="left" alt="Logo do VESTA">
 
-<h1>Aplicação desenvolvida para a visualização de dados meteorológicos coletados pelo <a href="https://www.instagram.com/irn_unifei/p/C_Tbql6JugA/" target="_blank">Projeto LabWind</a>. </h1>
-
-## Tecnologias Utilizadas
-
-<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS" />
+<div style="text-align: justify;">
+  <p style="text-align: justify;">
+    O <strong>VESTA</strong> é um sistema inteligente de <strong>detecção de quedas para idosos</strong>, desenvolvido com o objetivo de promover segurança e bem-estar para pessoas em idade avançada que vivem sozinhas. O sistema identifica automaticamente ocorrências classificadas como queda e envia alertas imediatos para familiares ou cuidadores.
+  </p>
+  <p style="text-align: justify;">
+    A solução é composta por um <strong>dispositivo vestível</strong>, conectado via Wi-Fi a um aplicativo mobile de monitoramento. Além disso, o VESTA emite <strong>alertas por SMS</strong> para um número previamente cadastrado, garantindo rápida resposta em situações de emergência.
+  </p>
+  <p style="text-align: justify;">
+    O <strong>propósito principal</strong> do projeto é aumentar a independência de idosos, reduzir os riscos associados à demora no atendimento após quedas e fornecer tranquilidade para famílias e cuidadores.
+  </p>
 </div>
-<span>Tecnologias modernas para a visualização de dados em tempo real.</span>
-<br/>
-<br/>
 
-## Equipe de Desenvolvimento
+## 🛠️ Tecnologias Utilizadas
 
-- **Breno de Luca** - [Product Owner](https://github.com/brn-lc)
-- **Vitor Francisco** - [Scrum Master](https://github.com/frevisto/)
-- **Claudio Santos** - [DevOps](https://github.com/claudsaints/)
-- **Nicolas Aquino** - [DevOps](https://github.com/nickaqui)
+![Adobe Photoshop](https://img.shields.io/badge/Adobe%20Photoshop-31A8FF?style=for-the-badge&logo=adobe-photoshop&logoColor=white)
+![Better Auth](https://img.shields.io/badge/Better%20Auth-4CAF50?style=for-the-badge&logo=auth0&logoColor=white)
+![Canva](https://img.shields.io/badge/Canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white)
+![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-FE5196?style=for-the-badge&logo=git&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![ESP32](https://img.shields.io/badge/ESP32-000000?style=for-the-badge&logo=espressif&logoColor=white)
+![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
+![Expo Router](https://img.shields.io/badge/Expo%20Router-4630EB?style=for-the-badge&logo=react&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![MPU6050](https://img.shields.io/badge/MPU6050-FF6F00?style=for-the-badge&logo=sensor&logoColor=white)
+![MQTT](https://img.shields.io/badge/MQTT-660066?style=for-the-badge&logo=eclipse-mosquitto&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=prisma&logoColor=white)
+![RNComponents](https://img.shields.io/badge/RNComponents-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![React Native](https://img.shields.io/badge/React%20Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3068B7?style=for-the-badge&logo=typescript&logoColor=white)
 
-  # 🗂️SPRINTS
-| Sprint  | Datas   | 
-|:-------:| --------------------- |
-| 1  | :calendar: 24/03/2025 a 15/04/2025|  
-| 2   | :calendar: 16/04/2025 a 13/05/2025 | 
-| 3 | :calendar: 14/05/2025 a 11/06/2025 |  
+## 📋 User Stories
 
-# 📰PRODUCT BACKLOG
+| ID    | User Story | Critérios de Aceitação |
+|-------|------------|----------------------|
+| US01  | Como idoso, quero me sentir seguro contra quedas, para que eu tenha proteção contínua. | a) Deve haver um acelerômetro e um microprocessador monitorando os movimentos do usuário.<br>b) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.<br>c) Deve haver um botão de alerta manual, acionável pelo usuário.<br>d) Ao detectar bateria baixa ou falta de conexão, o aplicativo deve emitir alertas. |
+| US02  | Como cuidador ou familiar, quero ser notificado quando meu ente querido sofrer uma queda, para poder agir rapidamente. | a) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.<br>b) Ao detectar bateria baixa ou falta de conexão do dispositivo, o aplicativo deve emitir alertas. |
+| US03  | Como usuário, quero reduzir falsos alertas, para que o sistema seja confiável e não cause frustração. | a) Devem existir mecanismos inteligentes para validar se ocorreu uma queda antes de disparar alertas. |
+| US04  | Como usuário, quero que meus dados sejam seguros e privados, para garantir minha privacidade e conformidade legal. | a) Deve haver login com senha para o usuário e para os cuidadores.<br>b) O sistema deve estar em conformidade com a LGPD (Lei Geral de Proteção de Dados). |
 
-| Requisitos Funcionais              |
-|---|
-| RF01 – O sistema deve consumir os dados gerados por três (03) estações meteorológicas específicas. |
-| RF02 – O sistema deve permitir a visualização gráfica dos dados meteorológicos. |
-| RF03 – O sistema deve emitir alertas meteorológicos com base nos dados recebidos. |
-| RF04 – O sistema deve permitir a visualização histórica dos dados, agrupados por estação, no formato tabular. |
-| RF05 – O sistema deve permitir a visualização, em gráfico, os parâmetros de uma estação específica. |
-| RF06 – O sistema deve permitir a visualização do mesmo parâmetro para diversas estações simultaneamente. |
-| RF07 – O sistema deve permitir o download dos dados no formato CSV. |
-| RF08 – O sistema deve ser restrito a usuários cadastrados. |
+## 📋 Product Backlog
+| Número | Recurso Funcional           | Síntese do Requisito                                         | Status          |
+|:------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
+|  RF01  | Detecção de Queda           | Identificar automaticamente quedas                           | 🔴 Não iniciado |
+|  RF02  | Envio de Alertas SMS        | Disparar SMS para número previamente cadastrado              | 🔴 Não iniciado |
+|  RF03  | Monitoramento Mobile        | Enviar dados em tempo real para o aplicativo mobile          | 🔴 Não iniciado |
+|  RF04  | Histórico de Ocorrências    | Registrar e disponibilizar histórico de quedas               | 🔴 Não iniciado |
+|  RF05  | Configuração de Usuários    | Cadastro e gerenciamento de perfis de usuários               | 🔴 Não iniciado |
 
-| Requisitos Não Funcionais           |
-|-------------------------------------|
-| RNF01 – Os gráficos devem ser interativos, permitindo ao usuário explorar os dados de forma dinâmica. |
-| RNF02 – Interface responsiva, com layout consistente em diferentes tamanhos de tela. |
-| RNF03 – Página descritiva do projeto, explicando objetivos, tecnologias utilizadas e instruções de uso. |
+| Número  | Recurso Não-Funcional       | Síntese do Requisito                                         | Status          |
+|:-------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
+|  RNF01  | Baixa Latência              | Garantir resposta rápida na detecção de quedas               | 🔴 Não iniciado |
+|  RNF02  | Interface Responsiva        | Aplicativo mobile com layout simples e acessível             | 🔴 Não iniciado |
+|  RNF03  | Alta Disponibilidade        | Sistema sempre disponível e tolerante a falhas               | 🔴 Não iniciado |
 
-# 📝 Sprint 1 - Configuração e Protótipo Inicial (24/03 - 15/04)
+## ⚙️ Instalação
 
-| Ator | Ação | Motivo |
-|--------------|--------------------------------------------------------------|------------------------------------------------------------|
-|Como usuário | Quero fazer login no sistema para acessar os dados meteorológicos. | Para garantir acesso seguro às informações. |
-|Como administrador | Quero cadastrar, excluir e gerenciar usuários no sistema. | Para controlar o acesso e manter a gestão de usuários. |
-|Como usuário | Quero visualizar uma página com informações do projeto para entender seus objetivos. | Para compreender o propósito do sistema. |
-|Equipe de desenvolvimento | Quero validar o protótipo no Figma antes da implementação. | Para garantir que o design atenda às necessidades. |
-|Equipe de desenvolvimento | Quero criar um repositório no GitHub com estrutura organizada. | Para versionar e documentar o código eficientemente. |
-|Equipe de desenvolvimento | Quero definir papéis claros na equipe (PO, SM, Dev). | Para organizar as responsabilidades e melhorar a eficiência. |
-|Equipe de desenvolvimento | Quero usar uma ferramenta de controle de tarefas (Trello) para organizar o progresso. | Para gerenciar o desenvolvimento de forma visual e organizada. |
+```bash
+# 1. Instalação do pnpm (caso não tenha)
+npm install -g pnpm
 
-**Entrega da Sprint 1:** Protótipo validado, login funcional, repositório configurado e estrutura inicial do sistema criada.
+# 2. Instalação das dependências do projeto
+pnpm i
 
----
+# 3. Criar usuário inicial no sistema
+pnpm run cria-user
 
-# 📝 Sprint 2 - Visualização de Dados e Gráficos (16/04 - 13/05)
+# 4. Rodar o ambiente de desenvolvimento
+pnpm run dev
 
-| Ator | Ação | Motivo |
-|--------------|--------------------------------------------------------------|------------------------------------------------------------|
-|Como usuário | Quero visualizar dados históricos das estações em tabela. | Para analisar informações de forma clara. |
-|Como usuário | Quero visualizar gráficos interativos dos parâmetros das estações. | Para entender as variações e tendências. |
-|Como usuário | Quero comparar gráficos de diferentes estações. | Para identificar padrões climáticos. |
-|Como usuário | Quero acessar a plataforma de qualquer dispositivo (responsividade). | Para consultar os dados em qualquer lugar. |
+# O servidor estará disponível localmente
+```
 
-**Entrega da Sprint 2:** Funcionalidades de visualização de dados tabulares e gráficos interativos implementadas e responsivas.
+### Links úteis para autenticação e gerenciamento de sessões
 
----
+- [Gerenciamento de Sessões - Better Auth](https://www.better-auth.com/docs/concepts/session-management#get-session)
+- [Documentação de Autenticação do Next.js](https://nextjs.org/docs/pages/building-your-application/authentication)
 
-# 📝 Sprint 3 - Refinamento e Exportação de Dados (14/05 - 10/06)
+### Configurações de PowerShell (se necessário)
 
-| Ator | Ação | Motivo |
-|--------------|--------------------------------------------------------------|------------------------------------------------------------|
-|Como usuário | Quero baixar os dados meteorológicos em CSV. | Para análise offline e armazenamento. |
-|Como usuário | Quero gráficos com legendas, rótulos e detalhes ao passar o mouse. | Para facilitar a compreensão dos dados. |
-|Equipe | Quero realizar testes de usabilidade e corrigir bugs críticos. | Para garantir a qualidade do sistema. |
-|Equipe | Quero manter o repositório bem documentado com instruções de instalação e uso. | Para facilitar manutenção futura. |
-|Equipe | Quero preparar uma apresentação final com demonstração das funcionalidades. | Para comunicar o resultado do projeto de forma clara. |
+```bash
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+```
 
-**Entrega da Sprint 3:** Sistema finalizado, testado, documentado e preparado para apresentação.
+### Convenções de Commit
 
-# WIREFRAME
-<div align="center">
-  
-  <img  src="https://github.com/Steel-Hard/LabWind/blob/main/documents/wireframe.png" />
-</div>
+Para seguir boas práticas de commits no seu projeto, consulte o repositório:  
+[Padrões de Commits](https://github.com/iuricode/padroes-de-commits).
+
+## 🔄 Scrum
+| Sprint                                    | Início     | Fim        | Status           | 📉 Burndown Chart                                        |
+|:-----------------------------------------:|:----------:|:----------:|:----------------:|:---------------------------------------------------------:|
+| [Sprint 1](public/docs/sprintbacklog1.md) | 24/03/2025 | 15/04/2025 | 🟡 Em Progresso | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_1.png) |
+| [Sprint 2](public/docs/sprintbacklog2.md) | 16/04/2025 | 13/05/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_2.png) |
+| [Sprint 3](public/docs/sprintbacklog3.md) | 14/05/2025 | 10/06/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_3.png) |
+
+## 👨‍💻 Dev Team
+| Nome                               | Função              | GitHub                                          |
+|:----------------------------------:|:-------------------:|:-----------------------------------------------:|
+| Nícolas Aquino                     | Product Owner       | [GitHub](https://github.com/Nickaqui)           |
+| Vitor Francisco de Azevedo Zonzini | Scrum Master        | [GitHub](https://github.com/frevisto)           |
+| Victor Hugo Dantas Carbajo         | Dev Team (Front-end)| [GitHub](https://github.com/Victor-Carbajo-DSM) |
+| Lucas Roque Alvim Cruz             | Dev Team (Front-end)| [GitHub](https://github.com/lucasroqe)          |
+| Maurício Oliveira Medeiros Cepinho | Dev Team (Back-end) | [GitHub](https://github.com/maucepinho)         |
+| Cláudio dos Santos Siqueira Júnior | Dev Team (Back-end) | [GitHub](https://github.com/claudsaints)        |
+| Ricardo Ladeira                    | Dev Team (Back-end) | [GitHub](https://github.com/rladeiraFatec)      |
