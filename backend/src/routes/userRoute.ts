@@ -1,24 +1,17 @@
-
-import { Router, RequestHandler } from "express";
-import userController from "../controllers/UserController";
-import { authenticateToken } from "../middlewares/jwt";
+import { Router, RequestHandler } from 'express';
+import userController from '../controllers/UserController';
+import { authenticateToken } from '../middlewares/jwt';
 
 const routes = Router();
 
+routes.post('/signin', userController.readUser);
 
-routes.post("/signin",
-  userController.readUser
+routes.post(
+  '/signup',
+
+  userController.createUser,
 );
 
-routes.post("/signup",
-
-  userController.createUser
-);
-
-routes.put(
-  "/updatePassword",
-  authenticateToken,
-  userController.updatePassword
-);
+routes.put('/updatePassword', authenticateToken, userController.updatePassword);
 
 export default routes;

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["jest","node"],
     "target": "ES6",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "commonjs",                                /* Specify what module code is generated. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
@@ -10,6 +11,7 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "ignoreDeprecations": "6.0"
-  }
+    "ignoreDeprecations": "5.0"
+  },
+   "include": ["src/**/*"]
 }

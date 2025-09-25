@@ -1,5 +1,4 @@
-import mongoose, { SchemaDefinitionProperty } from "mongoose";
-
+import mongoose, { SchemaDefinitionProperty } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, require: true },
@@ -8,15 +7,16 @@ const userSchema = new mongoose.Schema({
     require: true,
     unique: true,
     validate: {
-      validator: function (e:string) {
+      validator: function (e: string) {
         return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(e);
       },
-      message: (e:SchemaDefinitionProperty) => `${e.toString()} não é um email valido.`
+      message: (e: SchemaDefinitionProperty) =>
+        `${e.toString()} não é um email valido.`,
     },
   },
   password: { type: String, require: true, min: 6, max: 12 },
 });
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = mongoose.model('User', userSchema);
 
 export default userModel;
