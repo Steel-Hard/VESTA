@@ -1,4 +1,5 @@
 import mongoose, { SchemaDefinitionProperty } from 'mongoose';
+import elderSchema from './elder';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, require: true },
@@ -15,6 +16,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   password: { type: String, require: true, min: 6, max: 12 },
+  phoneNumber: { type: String, require: false },
+  eldely: [elderSchema],
 });
 
 const userModel = mongoose.model('User', userSchema);

@@ -10,8 +10,8 @@ app.use(cors());
 
 app.use(routes);
 
-app.get('/ping', (_req, res) => {
-  res.status(200).json({ message: 'pong' });
-});
+// app.get('/ping', (_req, res) => {
+//   res.status(200).json({ message: 'pong' });
+// });
 
 export default app;

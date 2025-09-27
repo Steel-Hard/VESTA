@@ -1,4 +1,4 @@
-import { Router, RequestHandler } from 'express';
+import { Router } from 'express';
 import userController from '../controllers/UserController';
 import { authenticateToken } from '../middlewares/jwt';
 

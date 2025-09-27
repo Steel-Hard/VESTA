@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import userModel from '../models/user';
-import IUser from '../types/interfaces/IUser';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { jwtSecret } from '../middlewares/jwt';
 
 class UserController {
+  //TODO: VERIFICAR OS TRATAMENDO DE ERROS
   public async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body;
     const nPassword = await bcrypt.hash(password, 8);
