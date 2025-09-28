@@ -1,6 +1,7 @@
 
 # ![Imagem de Capa](assets/steelhard-logo-prototype.jpg)
 
+
 <div align="center">
 <h1>
 <a href="#descrição">Descrição</a> || 
@@ -14,6 +15,8 @@
 </div>
 
 ## 📝 Descrição
+
+
 <img src="assets/vesta-logo.jpg" min-width="400px" max-width="400px" width="400px" align="left" alt="Logo do VESTA">
 
 <div style="text-align: justify;">
@@ -73,6 +76,7 @@
 |  RNF02  | Interface Responsiva        | Aplicativo mobile com layout simples e acessível             | 🔴 Não iniciado |
 |  RNF03  | Alta Disponibilidade        | Sistema sempre disponível e tolerante a falhas               | 🔴 Não iniciado |
 
+
 ## ⚙️ Instalação
 
 ```bash
@@ -104,17 +108,20 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 
 ### Convenções de Commit
 
+
 Para seguir boas práticas de commits no seu projeto, consulte o repositório:  
 [Padrões de Commits](https://github.com/iuricode/padroes-de-commits).
 
 ## 🔄 Scrum
 | Sprint                                    | Início     | Fim        | Status           | 📉 Burndown Chart                                        |
 |:-----------------------------------------:|:----------:|:----------:|:----------------:|:---------------------------------------------------------:|
+
 | [Sprint 1](public/docs/sprintbacklog1.md) | 24/03/2025 | 15/04/2025 | 🟡 Em Progresso | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_1.png) |
 | [Sprint 2](public/docs/sprintbacklog2.md) | 16/04/2025 | 13/05/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_2.png) |
 | [Sprint 3](public/docs/sprintbacklog3.md) | 14/05/2025 | 10/06/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_3.png) |
 
 ## 👨‍💻 Dev Team
+
 | Nome                               | Função              | GitHub                                          |
 |:----------------------------------:|:-------------------:|:-----------------------------------------------:|
 | Nícolas Aquino                     | Product Owner       | [GitHub](https://github.com/Nickaqui)           |
