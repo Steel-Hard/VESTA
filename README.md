@@ -1,4 +1,7 @@
 
+# ![Imagem de Capa](assets/steelhard-logo-prototype.jpg)
+
+
 <div align="center">
 <h1>
 <a href="#descrição">Descrição</a> || 
@@ -12,6 +15,7 @@
 </div>
 
 ## 📝 Descrição
+
 
 <img src="assets/vesta-logo.jpg" min-width="400px" max-width="400px" width="400px" align="left" alt="Logo do VESTA">
 
@@ -50,28 +54,28 @@
 
 ## 📋 User Stories
 
-| ID   | User Story                                                                                                             | Critérios de Aceitação                                                                                                                                                                                                                                                                                                                                      |
-| ---- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| US01 | Como idoso, quero me sentir seguro contra quedas, para que eu tenha proteção contínua.                              | a) Deve haver um acelerômetro e um microprocessador monitorando os movimentos do usuário.`<br>`b) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.`<br>`c) Deve haver um botão de alerta manual, acionável pelo usuário.`<br>`d) Ao detectar bateria baixa ou falta de conexão, o aplicativo deve emitir alertas. |
-| US02 | Como cuidador ou familiar, quero ser notificado quando meu ente querido sofrer uma queda, para poder agir rapidamente. | a) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.`<br>`b) Ao detectar bateria baixa ou falta de conexão do dispositivo, o aplicativo deve emitir alertas.                                                                                                                                                                |
-| US03 | Como usuário, quero reduzir falsos alertas, para que o sistema seja confiável e não cause frustração.             | a) Devem existir mecanismos inteligentes para validar se ocorreu uma queda antes de disparar alertas.                                                                                                                                                                                                                                                          |
-| US04 | Como usuário, quero que meus dados sejam seguros e privados, para garantir minha privacidade e conformidade legal.    | a) Deve haver login com senha para o usuário e para os cuidadores.`<br>`b) O sistema deve estar em conformidade com a LGPD (Lei Geral de Proteção de Dados).                                                                                                                                                                                              |
+| ID    | User Story | Critérios de Aceitação |
+|-------|------------|----------------------|
+| US01  | Como idoso, quero me sentir seguro contra quedas, para que eu tenha proteção contínua. | a) Deve haver um acelerômetro e um microprocessador monitorando os movimentos do usuário.<br>b) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.<br>c) Deve haver um botão de alerta manual, acionável pelo usuário.<br>d) Ao detectar bateria baixa ou falta de conexão, o aplicativo deve emitir alertas. |
+| US02  | Como cuidador ou familiar, quero ser notificado quando meu ente querido sofrer uma queda, para poder agir rapidamente. | a) Ao detectar uma queda, deve ser enviado um alerta imediatamente aos interessados.<br>b) Ao detectar bateria baixa ou falta de conexão do dispositivo, o aplicativo deve emitir alertas. |
+| US03  | Como usuário, quero reduzir falsos alertas, para que o sistema seja confiável e não cause frustração. | a) Devem existir mecanismos inteligentes para validar se ocorreu uma queda antes de disparar alertas. |
+| US04  | Como usuário, quero que meus dados sejam seguros e privados, para garantir minha privacidade e conformidade legal. | a) Deve haver login com senha para o usuário e para os cuidadores.<br>b) O sistema deve estar em conformidade com a LGPD (Lei Geral de Proteção de Dados). |
 
 ## 📋 Product Backlog
+| Número | Recurso Funcional           | Síntese do Requisito                                         | Status          |
+|:------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
+|  RF01  | Detecção de Queda           | Identificar automaticamente quedas                           | 🔴 Não iniciado |
+|  RF02  | Envio de Alertas SMS        | Disparar SMS para número previamente cadastrado              | 🔴 Não iniciado |
+|  RF03  | Monitoramento Mobile        | Enviar dados em tempo real para o aplicativo mobile          | 🔴 Não iniciado |
+|  RF04  | Histórico de Ocorrências    | Registrar e disponibilizar histórico de quedas               | 🔴 Não iniciado |
+|  RF05  | Configuração de Usuários    | Cadastro e gerenciamento de perfis de usuários               | 🔴 Não iniciado |
 
-| Número | Recurso Funcional           |                Síntese do Requisito                |      Status      |
-| :-----: | --------------------------- | :-------------------------------------------------: | :--------------: |
-|  RF01  | Detecção de Queda         |         Identificar automaticamente quedas         | 🔴 Não iniciado |
-|  RF02  | Envio de Alertas SMS        |  Disparar SMS para número previamente cadastrado  | 🔴 Não iniciado |
-|  RF03  | Monitoramento Mobile        | Enviar dados em tempo real para o aplicativo mobile | 🔴 Não iniciado |
-|  RF04  | Histórico de Ocorrências  |   Registrar e disponibilizar histórico de quedas   | 🔴 Não iniciado |
-|  RF05  | Configuração de Usuários |   Cadastro e gerenciamento de perfis de usuários   | 🔴 Não iniciado |
+| Número  | Recurso Não-Funcional       | Síntese do Requisito                                         | Status          |
+|:-------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
+|  RNF01  | Baixa Latência              | Garantir resposta rápida na detecção de quedas               | 🔴 Não iniciado |
+|  RNF02  | Interface Responsiva        | Aplicativo mobile com layout simples e acessível             | 🔴 Não iniciado |
+|  RNF03  | Alta Disponibilidade        | Sistema sempre disponível e tolerante a falhas               | 🔴 Não iniciado |
 
-| Número | Recurso Não-Funcional |               Síntese do Requisito               |      Status      |
-| :-----: | ---------------------- | :-----------------------------------------------: | :--------------: |
-|  RNF01  | Baixa Latência        | Garantir resposta rápida na detecção de quedas | 🔴 Não iniciado |
-|  RNF02  | Interface Responsiva   | Aplicativo mobile com layout simples e acessível | 🔴 Não iniciado |
-|  RNF03  | Alta Disponibilidade   |  Sistema sempre disponível e tolerante a falhas  | 🔴 Não iniciado |
 
 ## ⚙️ Instalação
 
@@ -104,25 +108,26 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 
 ### Convenções de Commit
 
-Para seguir boas práticas de commits no seu projeto, consulte o repositório:
+
+Para seguir boas práticas de commits no seu projeto, consulte o repositório:  
 [Padrões de Commits](https://github.com/iuricode/padroes-de-commits).
 
 ## 🔄 Scrum
+| Sprint                                    | Início     | Fim        | Status           | 📉 Burndown Chart                                        |
+|:-----------------------------------------:|:----------:|:----------:|:----------------:|:---------------------------------------------------------:|
 
-|                 Sprint                 |  Início  |    Fim    |      Status      |                    📉 Burndown Chart                    |
-| :------------------------------------: | :--------: | :--------: | :--------------: | :-----------------------------------------------------: |
 | [Sprint 1](public/docs/sprintbacklog1.md) | 24/03/2025 | 15/04/2025 | 🟡 Em Progresso | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_1.png) |
 | [Sprint 2](public/docs/sprintbacklog2.md) | 16/04/2025 | 13/05/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_2.png) |
 | [Sprint 3](public/docs/sprintbacklog3.md) | 14/05/2025 | 10/06/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_3.png) |
 
 ## 👨‍💻 Dev Team
 
-|                 Nome                 |       Função       |                    GitHub                    |
-| :----------------------------------: | :------------------: | :------------------------------------------: |
-|           Nícolas Aquino           |    Product Owner    |      [GitHub](https://github.com/Nickaqui)      |
-|  Vitor Francisco de Azevedo Zonzini  |     Scrum Master     |      [GitHub](https://github.com/frevisto)      |
-|      Victor Hugo Dantas Carbajo      | Dev Team (Front-end) | [GitHub](https://github.com/Victor-Carbajo-DSM) |
-|        Lucas Roque Alvim Cruz        | Dev Team (Front-end) |     [GitHub](https://github.com/lucasroqe)     |
-| Maurício Oliveira Medeiros Cepinho | Dev Team (Back-end) |     [GitHub](https://github.com/maucepinho)     |
-| Cláudio dos Santos Siqueira Júnior | Dev Team (Back-end) |    [GitHub](https://github.com/claudsaints)    |
-|           Ricardo Ladeira           | Dev Team (Back-end) |   [GitHub](https://github.com/rladeiraFatec)   |
+| Nome                               | Função              | GitHub                                          |
+|:----------------------------------:|:-------------------:|:-----------------------------------------------:|
+| Nícolas Aquino                     | Product Owner       | [GitHub](https://github.com/Nickaqui)           |
+| Vitor Francisco de Azevedo Zonzini | Scrum Master        | [GitHub](https://github.com/frevisto)           |
+| Victor Hugo Dantas Carbajo         | Dev Team (Front-end)| [GitHub](https://github.com/Victor-Carbajo-DSM) |
+| Lucas Roque Alvim Cruz             | Dev Team (Front-end)| [GitHub](https://github.com/lucasroqe)          |
+| Maurício Oliveira Medeiros Cepinho | Dev Team (Back-end) | [GitHub](https://github.com/maucepinho)         |
+| Cláudio dos Santos Siqueira Júnior | Dev Team (Back-end) | [GitHub](https://github.com/claudsaints)        |
+| Ricardo Ladeira                    | Dev Team (Back-end) | [GitHub](https://github.com/rladeiraFatec)      |
