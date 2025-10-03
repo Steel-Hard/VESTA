@@ -6,11 +6,9 @@ const routes = Router();
 
 routes.post('/signin', userController.readUser);
 
-routes.post(
-  '/signup',
+routes.post('/signup', userController.createUser);
 
-  userController.createUser,
-);
+routes.post('/google/:idToken', userController.AuthWithGoogle);
 
 routes.put('/updatePassword', authenticateToken, userController.updatePassword);
 
