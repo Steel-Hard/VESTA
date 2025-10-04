@@ -3,6 +3,8 @@ import userModel from '../models/user';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { jwtSecret } from '../middlewares/jwt';
+import { OAuth2Client } from 'google-auth-library';
+import { config } from '../config';
 
 class UserController {
   //TODO: VERIFICAR OS TRATAMENDO DE ERROS
@@ -15,6 +17,8 @@ class UserController {
         name,
         email,
         password: nPassword,
+        authProvider: 'local',
+        googleId: null,
       });
       res.status(201).json({ data });
     } catch (error) {
@@ -49,6 +53,47 @@ class UserController {
     } catch (error) {
       console.log(error);
       throw new Error('Erro ao buscar usuário');
+    }
+  }
+  public async AuthWithGoogle(req: Request, res: Response): Promise<any> {
+    const { idToken } = req.params;
+
+    const client = new OAuth2Client(
+      config.CLIENT_ID,
+    );
+
+    try {
+      const tiket = await client.verifyIdToken({
+        idToken,
+        audience:
+        config.CLIENT_ID,
+      });
+
+      const payload = tiket.getPayload();
+
+      let user = await userModel.findOne({ googleId: payload?.sub });
+
+      if (!user && payload) {
+        user = await userModel.findOne({ email: payload.email });
+
+        if (user) {
+          user.googleId = payload.sub;
+          user.authProvider = 'google';
+          await user.save();
+        } else {
+          user = await userModel.create({
+            email: payload.email,
+            name: payload.name,
+            avatar: payload.picture,
+            googleId: payload.sub,
+            authProvider: 'google',
+          });
+        }
+      }
+
+      return res.status(200).json(payload);
+    } catch (error) {
+      res.status(401).json({ error: 'Token inválido' });
     }
   }
 
