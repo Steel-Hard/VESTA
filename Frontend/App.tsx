@@ -1,8 +1,10 @@
 import React from 'react';
-import LoginScreen from './src/screens/LoginScreen';
-import './global.css';
+import { View, Text } from 'react-native';
 
 export default function App() {
-  return <LoginScreen />;
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Vesta App</Text>
+    </View>
+  );
 }
-
