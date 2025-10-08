@@ -1,6 +1,4 @@
-
-# ![Imagem de Capa](assets/steelhard-logo-prototype.jpg)
-
+# ![Imagem de Capa](assets/steelhard-logo-prototype.png)
 
 <div align="center">
 <h1>
@@ -17,7 +15,7 @@
 ## 📝 Descrição
 
 
-<img src="assets/vesta-logo.jpg" min-width="400px" max-width="400px" width="400px" align="left" alt="Logo do VESTA">
+<img src="assets/vesta-logo.png" min-width="400px" max-width="400px" width="400px" align="left" alt="Logo do VESTA">
 
 <div style="text-align: justify;">
   <p style="text-align: justify;">
@@ -115,7 +113,6 @@ Para seguir boas práticas de commits no seu projeto, consulte o repositório:
 ## 🔄 Scrum
 | Sprint                                    | Início     | Fim        | Status           | 📉 Burndown Chart                                        |
 |:-----------------------------------------:|:----------:|:----------:|:----------------:|:---------------------------------------------------------:|
-
 | [Sprint 1](public/docs/sprintbacklog1.md) | 24/03/2025 | 15/04/2025 | 🟡 Em Progresso | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_1.png) |
 | [Sprint 2](public/docs/sprintbacklog2.md) | 16/04/2025 | 13/05/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_2.png) |
 | [Sprint 3](public/docs/sprintbacklog3.md) | 14/05/2025 | 10/06/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_3.png) |
