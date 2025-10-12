@@ -44,6 +44,16 @@ export default function AppLayout() {
           },
         }}
       />
+      <Tabs.Screen
+        name="test"
+        options={{
+          tabBarIcon: () => {
+            return (
+                <Ionicons name="logo-gitlab" size={28} color="black" />
+            );
+          },
+        }}
+      />
     </Tabs>
   );
 }

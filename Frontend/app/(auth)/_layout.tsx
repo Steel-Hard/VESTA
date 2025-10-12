@@ -1,10 +1,13 @@
+import { AuthContextProvider } from "@/context/AuthContext";
 import { Stack } from "expo-router";
 
 export default function AppLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="sign-in" />
-      <Stack.Screen name="sign-up" />
-    </Stack>
+  
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="sign-in" />
+        <Stack.Screen name="sign-up" />
+      </Stack>
+
   );
 }

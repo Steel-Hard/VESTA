@@ -1,21 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, Pressable } from "react-native";
-import { Link, useRouter } from "expo-router";
+import React from "react";
+import {
+  ScrollView,
+  View,
+  Text,
+  Pressable,
+  Alert,
+  Keyboard,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { Link } from "expo-router";
 import { styles } from "@/styles";
 import Input from "@/components/Input";
 import { Ionicons } from "@expo/vector-icons";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { makeRedirectUri } from "expo-auth-session";
-
+import { validadeSchemaSignIn } from "@/validation";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/useAuth";
+import { AppError } from "@/utils/AppError";
+import vestaLogo from "@/assets/images/vesta-logo.png";
 WebBrowser.maybeCompleteAuthSession();
 const redirectUri = makeRedirectUri();
-
+type FormData = {
+  email: string;
+  password: string;
+};
 export default function SignIn() {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  //const router = useRouter();
+  const { signIn } = useAuth();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: "",
@@ -23,43 +39,83 @@ export default function SignIn() {
     redirectUri,
   });
 
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { authentication } = response;
-      // Use o 'authentication.accessToken' para fazer chamadas à API do Google
-      // ou envie-o para seu backend para autenticação.
-      console.log("Token de autenticação:", authentication?.accessToken);
-    }
-  }, [response]);
+  // useEffect(() => {
+  //   if (response?.type === "success") {
+  //     const { authentication } = response;
+  //     // Use o 'authentication.accessToken' para fazer chamadas à API do Google
+  //     // ou envie-o para seu backend para autenticação.
+  //     console.log("Token de autenticação:", authentication?.accessToken);
+  //   }
+  // }, [response]);
 
-  const handleSignIn = async () => {
-    // TODO: implement sign-up
-    router.push("/(app)/home");
+  //const signInWithGoogle = async () => {};
+
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: yupResolver(validadeSchemaSignIn),
+  });
+  const handlerError = (error: any) => console.log("Form Errors:", error);
+
+  const handleSignIn = async ({ email, password }: FormData) => {
+    setIsLoading(true);
+    Keyboard.dismiss();
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError
+        ? error.message
+        : "Não foi fazer login. Tente novamente mais tarde";
+
+      Alert.alert("Erro", title);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const signInWithGoogle = async () => {};
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Image className="w-2/4 h-60" source={vestaLogo} />
       <Text style={styles.title}>Seja bem vindo!</Text>
-
-      <Input
-        style={styles.input}
-        placeholder="E-mail"
-        value={email}
-        keyboardType="email-address"
-        onChangeText={setEmail}
+      <Controller
+        control={control}
+        name="email"
+        render={({ field: { onChange, value } }) => (
+          <Input
+            placeholder="E-mail"
+            value={value}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            onChangeText={onChange}
+          />
+        )}
       />
-
-      <Input
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
+      <Controller
+        control={control}
+        name="password"
+        render={({ field: { onChange, value } }) => (
+          <Input
+            placeholder="Password"
+            autoCapitalize="none"
+            secureTextEntry
+            value={value}
+            onChangeText={onChange}
+            onSubmitEditing={handleSubmit(handleSignIn)}
+          />
+        )}
       />
-
-      <Pressable style={styles.button} onPress={handleSignIn}>
+      <Pressable
+        style={styles.button}
+        onPress={handleSubmit(handleSignIn, handlerError)}
+      >
         <Text style={styles.buttonText}>Entrar</Text>
       </Pressable>
 

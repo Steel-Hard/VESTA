@@ -1,9 +1,17 @@
-import { ScrollView, Text } from "react-native";
+import { useAuth } from "@/hooks/useAuth";
+import { styles } from "@/styles";
+import { Pressable, ScrollView, Text } from "react-native";
 
 export default function Profile() {
+  const { user, signOut } = useAuth();
   return (
     <ScrollView>
-      <Text className="text-center mt-80 bg-slate-500">Hi</Text>
+      <Pressable
+        onPress={signOut}
+        style={styles.button}
+      >
+        <Text>Sair</Text>
+      </Pressable>
     </ScrollView>
   );
 }

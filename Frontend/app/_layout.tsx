@@ -1,21 +1,46 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "@/global.css";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthContextProvider } from "@/context/AuthContext";
+import { ActivityIndicator } from "react-native";
+import { useEffect, useState } from "react";
 
-export default function RootLayout() {
-  const isAuthenticated = false;
+function RootLayoutNav() {
+  const { user, isLoading } = useAuth();
+  const [isAuthenticated, setIsAutenticated] = useState(false);
+
+  useEffect(() => {
+    if (user && user.id) {
+      setIsAutenticated(true);
+    }
+    if (!(user && user.id)) {
+      setIsAutenticated(false);
+    }
+  }, [user]);
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
 
   return (
-    <>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={isAuthenticated}>
-          <Stack.Screen name="(app)" />
-        </Stack.Protected>
-        <Stack.Protected guard={!isAuthenticated}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
-      </Stack>
+    <Stack screenOptions={{ headerShown: false }} >
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen  name="(app)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthContextProvider>
+      <RootLayoutNav />
       <StatusBar style="light" />
-    </>
+    </AuthContextProvider>
   );
 }
