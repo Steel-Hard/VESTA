@@ -9,7 +9,7 @@ import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const isAuthenticated = false;
+  const isAuthenticated = true;
 
   return (
     <GluestackUIProvider mode="light" config={config}>

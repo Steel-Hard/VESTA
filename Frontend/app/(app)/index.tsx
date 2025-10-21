@@ -1,36 +1,47 @@
-import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
+export default function TelaCadastroIdoso() {
+  const navigation = useNavigation();
+  const [nome, setNome] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
 
-export default function TabOneScreen() {
+  const router = useRouter();
+
+  const handleCadastro = () => {
+    if (!nome || !dataNascimento) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+    alert(`Idoso ${nome} cadastrado com sucesso!`);
+  };
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ padding: 16, gap: 16 }}
-    >
-      <Text style={styles.title}>Welcome </Text>
-
-      <View>
-        <Text>User:</Text>
-        <Text
-          selectable
-          style={{
-            backgroundColor: "black",
-            padding: 16,
-            color: "orange",
-            borderRadius: 16,
-          }}
-        >
-
-        </Text>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => router.push("/register")}>
+        <Text style={styles.link}>Ir para registro</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push("/list")}>
+        <Text style={styles.link}>Lista idosos</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingHorizontal: 30,
+  },
+  link: {
+    color: "#7E57C2",
+    fontSize: 14,
+    textDecorationLine: "underline",
   },
 });
