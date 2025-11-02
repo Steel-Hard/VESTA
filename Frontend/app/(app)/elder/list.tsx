@@ -1,43 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, FlatList, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { styles } from "@/styles";
 import { ElderCard } from "@/components/ElderCard";
 import { api } from "@/services/api";
-import { ApiData } from "@/store/slices/elderSlice";
+import { setElders, ApiData } from "@/store/slices/elderSlice";
+import {  Ionicons } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+
 
 interface Elder {
-  id: string;
+  _id: string;
   name: string;
   birthDate: string;
   deviceId: string;
+  imageUrl?: string;
 }
 
 export default function Listas() {
-  const [elders, setElders] = useState<Elder[]>([]);
+  const elders: Elder[] = useSelector((state: any) => {
+    return state.elder?.elders ?? state.elder?.list ?? [];
+  });
+  const dispatch = useDispatch();
+
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const monitoringRedirect = (elder: Elder) => {
     console.log(elder);
-    router.push({ pathname: "/elder/monitoring", params: { id: elder.id, name: elder.name, birthDate: elder.birthDate, deviceId: elder.deviceId} });
-  }
+    router.push({
+      pathname: "/elder/monitoring",
+      params: {
+        _id: elder._id,
+        name: elder.name,
+        birthDate: elder.birthDate,
+        deviceId: elder.deviceId,
+        imageUrl: elder.imageUrl,
+      },
+    });
+  };
 
   useEffect(() => {
     const fetchElders = async () => {
-    try {
-      const {data} = await api.get<ApiData>("/elder");
-      setElders(data.eldely);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      try {
+        const { data } = await api.get<ApiData>("/elder");
+        const list = data.eldely
+        dispatch(setElders(list as Elder[]));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchElders();
-  }, []);
-
-  
+  }, [dispatch]);
 
   const EmptyList = () => (
     <View style={styles.emptyContainer}>
@@ -58,26 +80,35 @@ export default function Listas() {
     <View style={styles.container}>
       <FlatList
         data={elders}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item,  index }) => (
+        keyExtractor={(item) => item._id}
+        renderItem={({ item, index }) => (
           <ElderCard
-            nome={item.name}
+            name={item.name}
+            imageUrl={item.imageUrl}
             key={index}
             onPress={() => monitoringRedirect(item)}
           />
         )}
         contentContainerStyle={styles.listContent}
+        
         ListEmptyComponent={EmptyList}
       />
 
       <Pressable
-        style={styles.button}
+        style={[
+          styles.button,
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        ]}
         onPress={() => router.push("/elder/register")}
       >
         <Text style={styles.buttonText}>Adicionar Idoso</Text>
+
+        <Ionicons name="add" size={30} color="#fff" />
       </Pressable>
     </View>
   );
 }
-
-

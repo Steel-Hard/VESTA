@@ -21,17 +21,15 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Loading from "@/components/Loading";
-import Container from "@/components/Container";
 
 export default function Profile() {
   const SIZE = 150;
-  const inputHeight = 60;
 
   const [imageLoading, setImageLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [userPhoto, setUserPhoto] = useState<string>();
 
-  const { width } = useWindowDimensions();
+  useWindowDimensions();
 
   const { updateUserProfile, user, signOut } = useAuth();
 
@@ -55,7 +53,7 @@ export default function Profile() {
 
     try {
       const photoSelected = await imagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images", "livePhotos"],
+        mediaTypes: imagePicker.MediaTypeOptions.Images,
         quality: 1,
         aspect: [4, 4],
         allowsEditing: true,
@@ -68,47 +66,32 @@ export default function Profile() {
           photoSelected.assets[0].fileSize &&
           photoSelected.assets[0].fileSize / 1024 / 1024 > 5
         ) {
-          Alert.alert(
-            "Sua imagem é muito grande",
-            "Escolha uma imagem até 5 Mb"
-          );
+          Alert.alert("Sua imagem é muito grande", "Escolha uma imagem até 5 Mb");
           return;
         }
 
         const fileExtension = photoSelected.assets[0].uri.split(".").pop();
 
-        const photoFile = {
-          name: `${user.name}.${fileExtension}`
-            .replaceAll(" ", "")
-            .toLowerCase(),
+        const formData = new FormData();
+        formData.append('photo', {
+          name: `${user.name}.${fileExtension}`.toLowerCase().replace(/\s/g, ''),
           uri: photoSelected.assets[0].uri,
-          type: `${photoSelected.assets[0].type}/${fileExtension}`,
-        } as any;
+          type: `image/${fileExtension}`
+        } as any);
 
-        const userPhotoUploadForm = new FormData();
+        const { data }: any = await api.patch("/auth/upload", formData, {
+          headers: { 
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
-        const { data }: any = await api.patch(
-          "/users/avatar",
-          userPhotoUploadForm,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        const userUpdated = user;
-
-        userUpdated.avatar = data.avatar;
-
+        const userUpdated = { ...user, avatar: data.url };
         await updateUserProfile(userUpdated);
 
-        Alert.alert(
-          "Perfil Atualizado",
-          "Sua foto de perfil foi atualizada com sucesso"
-        );
+        Alert.alert("Perfil Atualizado", "Sua foto de perfil foi atualizada com sucesso");
       }
     } catch (error) {
+      console.log(error);
       const isAppError = error instanceof AppError;
 
       const title = isAppError
@@ -151,11 +134,7 @@ export default function Profile() {
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.headerContainer}>
         <UserPhoto
-          src={
-            user.avatar
-              ? `${api.defaults.baseURL}/avatar/${user.avatar}`
-              : "https://github.com/Steel-Hard.png"
-          }
+          src={user.avatar || "https://github.com/Steel-Hard.png"}
           radius={80}
           size={SIZE}
           alt="profile_image"
@@ -244,7 +223,7 @@ export default function Profile() {
           {isUpdating ? (
             <Loading />
           ) : (
-            <Text style={styles.buttonText}>Atualizar</Text>
+            <Text style={styles.buttonText}>Atualizar Perfil</Text>
           )}
         </Pressable>
       </View>

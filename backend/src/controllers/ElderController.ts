@@ -1,42 +1,79 @@
 import { Request, Response } from 'express';
 import IElder from '../types/interfaces/IElder';
 import userModel from '../models/user';
-import mongoose from 'mongoose';
+import { v2 as cloudinary } from 'cloudinary';
+import { config } from '../config';
+import fs from 'fs';
+
 class ElderController {
   async addElder(_req: Request, _res: Response) {
     const { elderName, elderBirthDate, elderDeviceId } = _req.body;
     const { user } = _res.locals;
 
-    // Validate and parse the date
-    const parsedDate = new Date(elderBirthDate);
-    if (isNaN(parsedDate.getTime())) {
-      return _res.status(400).json({ error: 'Data de nascimento inválida' });
-    }
-
-    const elderObject = {
-      name: elderName,
-      birthDate: parsedDate,
-      deviceId: elderDeviceId,
-    };
+    let imageUrl = undefined;
 
     try {
-      // Corrigindo a query para usar _id ao invés de id
-      const newElderInUser = await userModel.findByIdAndUpdate(
-        user, // Remove o { id: user } e usa direto o user
-        {
-          $push: {
-            eldely: elderObject,
-          },
-        },
-        { new: true }, // Retorna o documento atualizado
-      );
+      if (_req.file) {
+        const filePath = _req.file.path;
 
-      if (!newElderInUser) {
-        return _res.status(404).json({ error: 'Usuário não encontrado' });
+        cloudinary.config({
+          cloud_name: config.CLOUDNARY_NAME,
+          api_key: config.CLOUDNARY_API_KEY,
+          api_secret: config.CLOUDNARY_API_SECRET,
+        });
+
+        const result = await cloudinary.uploader.upload(filePath, {
+          folder: 'vesta/elders',
+          transformation: [
+            { width: 500, height: 500, crop: 'fill' },
+            { quality: 'auto' },
+          ],
+        });
+
+        fs.unlinkSync(filePath);
+        imageUrl = result.secure_url;
       }
 
-      return _res.status(201).json(newElderInUser);
+      const parsedDate = new Date(elderBirthDate);
+      if (isNaN(parsedDate.getTime())) {
+        return _res.status(400).json({ error: 'Data de nascimento inválida' });
+      }
+
+      const elderObject = {
+        name: elderName,
+        birthDate: parsedDate,
+        deviceId: elderDeviceId,
+        imageUrl: imageUrl,
+      };
+
+      try {
+        const newElder = await userModel.findByIdAndUpdate(
+          user,
+          {
+            $push: {
+              eldely: elderObject,
+            },
+          },
+          { new: true },
+        );
+
+        if (!newElder) {
+          return _res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        return _res.status(201).json(newElder.eldely);
+      } catch (error) {
+        console.log(error);
+        return _res.status(501).json({ error: 'Erro ao registrar idoso' });
+      }
     } catch (error) {
+      if (_req.file) {
+        try {
+          fs.unlinkSync(_req.file.path);
+        } catch (e) {
+          console.error('Error deleting temporary file:', e);
+        }
+      }
       console.log(error);
       return _res.status(501).json({ error: 'Erro ao registrar idoso' });
     }

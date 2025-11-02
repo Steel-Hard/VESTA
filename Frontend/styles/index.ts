@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   listContent: {
-    padding: 16,
+    padding: 12,
     width: "100%",
     alignItems: "center",
   },
@@ -61,12 +61,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  elderIconContainer: {
-    backgroundColor: "#F4F4F4",
-    borderRadius: 12,
-    padding: 12,
-    marginRight: 12,
-  },
+
   elderName: {
     flex: 1,
     fontSize: 16,
@@ -208,4 +203,11 @@ export const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.7,
   },
+  selectedImageIcon: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+},
+
+
 });
