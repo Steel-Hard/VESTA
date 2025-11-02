@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { AuthContextProvider } from "@/context/AuthContext";
 import { ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
@@ -24,9 +26,9 @@ function RootLayoutNav() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }} >
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isAuthenticated}>
-        <Stack.Screen  name="(app)" />
+        <Stack.Screen name="(app)" />
       </Stack.Protected>
 
       <Stack.Protected guard={!isAuthenticated}>
@@ -38,9 +40,11 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthContextProvider>
-      <RootLayoutNav />
-      <StatusBar style="light" />
-    </AuthContextProvider>
+    <Provider store={store}>
+      <AuthContextProvider>
+        <RootLayoutNav />
+        <StatusBar style="light" />
+      </AuthContextProvider>
+    </Provider>
   );
 }

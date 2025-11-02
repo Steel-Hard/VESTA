@@ -7,23 +7,37 @@ class ElderController {
     const { elderName, elderBirthDate, elderDeviceId } = _req.body;
     const { user } = _res.locals;
 
+    // Validate and parse the date
+    const parsedDate = new Date(elderBirthDate);
+    if (isNaN(parsedDate.getTime())) {
+      return _res.status(400).json({ error: 'Data de nascimento inválida' });
+    }
+
     const elderObject = {
       name: elderName,
-      birthDate: new Date(elderBirthDate),
+      birthDate: parsedDate,
       deviceId: elderDeviceId,
-    } as IElder;
-
-    console.log(`Elder: ${elderObject}, userId: ${user}`);
+    };
 
     try {
-      const newElderInUser = await userModel.findByIdAndUpdate(user, {
-        $push: {
-          eldely: elderObject,
+      // Corrigindo a query para usar _id ao invés de id
+      const newElderInUser = await userModel.findByIdAndUpdate(
+        user, // Remove o { id: user } e usa direto o user
+        {
+          $push: {
+            eldely: elderObject,
+          },
         },
-      });
+        { new: true }, // Retorna o documento atualizado
+      );
+
+      if (!newElderInUser) {
+        return _res.status(404).json({ error: 'Usuário não encontrado' });
+      }
 
       return _res.status(201).json(newElderInUser);
     } catch (error) {
+      console.log(error);
       return _res.status(501).json({ error: 'Erro ao registrar idoso' });
     }
   }

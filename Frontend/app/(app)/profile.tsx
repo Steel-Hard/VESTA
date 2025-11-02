@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useState } from "react";
-import Input from "@/components/Input";
+import Input from "@/components/Input/index";
 import { styles } from "@/styles/index";
 import * as imagePicker from "expo-image-picker";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,7 +33,7 @@ export default function Profile() {
 
   const { width } = useWindowDimensions();
 
-  const { updateUserProfile, user,signOut } = useAuth();
+  const { updateUserProfile, user, signOut } = useAuth();
 
   const {
     control,
@@ -148,131 +148,110 @@ export default function Profile() {
   };
 
   return (
-    <>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.headerContainer}>
+        <UserPhoto
+          src={
+            user.avatar
+              ? `${api.defaults.baseURL}/avatar/${user.avatar}`
+              : "https://github.com/Steel-Hard.png"
+          }
+          radius={80}
+          size={SIZE}
+          alt="profile_image"
+        />
 
-        <ScrollView  contentContainerStyle={{ paddingBottom: 120 }}>
-           <Pressable
-        onPress={signOut}
-        style={styles.button}
-      >
-        <Text>Sair</Text>
-      </Pressable>
-          <View style={styles.container}>
-            <UserPhoto
-              src={
-                user.avatar
-                  ? `${api.defaults.baseURL}/avatar/${user.avatar}`
-                  : "https://github.com/Steel-Hard.png"
-              }
-              radius={80}
-              size={SIZE}
-              alt="profile_image"
-            />
-          </View>
+        <Pressable
+          onPress={handlerUserPhotoSelect}
+          style={styles.changePhotoButton}
+        >
+          <Text style={styles.changePhotoText}>Alterar foto</Text>
+        </Pressable>
+      </View>
 
-          <Pressable onPress={handlerUserPhotoSelect} style={{ margin: 5 }}>
-            <Text style={{ textAlign: "center", marginVertical: 5 }}>
-              Alterar foto
-            </Text>
-          </Pressable>
-
-          <View style={[styles.container, { marginTop: 10, width }]}>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  placeholder="Nome"
-                  keyboardType="default"
-                  autoCapitalize="none"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  style={{ height: inputHeight }}
-                  value={value}
-                />
-              )}
-            />
-
+      <View style={styles.formContainer}>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, value, onBlur } }) => (
             <Input
-              placeholder="E-mail"
-              style={{ height: inputHeight }}
-              editable={false}
-              value={user.email}
+              placeholder="Nome"
+              keyboardType="default"
+              autoCapitalize="none"
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
             />
-          </View>
+          )}
+        />
 
-          <View style={[styles.container, { marginTop: 10, width }]}>
-            <Text
-              style={{
-                textAlign: "center",
-                alignSelf: "flex-start",
-                marginVertical: 10,
-                paddingLeft: 20,
-              }}
-            >
-              Alterar Senha
-            </Text>
+        <Input placeholder="E-mail" editable={false} value={user.email} />
 
-            <Controller
-              control={control}
-              name="old_password"
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  placeholder="Senha antiga"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  style={{ height: inputHeight }}
-                />
-              )}
+        <Text style={styles.sectionTitle}>Alterar Senha</Text>
+
+        <Controller
+          control={control}
+          name="old_password"
+          render={({ field: { onChange, value, onBlur } }) => (
+            <Input
+              placeholder="Senha antiga"
+              secureTextEntry
+              autoCapitalize="none"
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  placeholder="Nova Senha"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  style={{ height: inputHeight }}
-                />
-              )}
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, value, onBlur } }) => (
+            <Input
+              placeholder="Nova Senha"
+              secureTextEntry
+              autoCapitalize="none"
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="confirm_password"
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  placeholder="Confirme a nova senha"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  style={{ height: inputHeight }}
-                  returnKeyType="send"
-                  onSubmitEditing={handleSubmit(handleProfileUpdate)}
-                />
-              )}
+        <Controller
+          control={control}
+          name="confirm_password"
+          render={({ field: { onChange, value, onBlur } }) => (
+            <Input
+              placeholder="Confirme a nova senha"
+              secureTextEntry
+              autoCapitalize="none"
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              returnKeyType="send"
+              onSubmitEditing={handleSubmit(handleProfileUpdate)}
             />
+          )}
+        />
 
-            <Pressable
-              onPress={handleSubmit(handleProfileUpdate)}
-              style={styles.button}
-              disabled={isUpdating}
-            >
-                {isUpdating ? <Loading /> : <Text style={styles.buttonText}>Atualizar</Text>}
-            </Pressable>
-          </View>
-        </ScrollView>
-     
-    </>
+        <Pressable
+          onPress={handleSubmit(handleProfileUpdate)}
+          style={styles.updateButton}
+          disabled={isUpdating}
+        >
+          {isUpdating ? (
+            <Loading />
+          ) : (
+            <Text style={styles.buttonText}>Atualizar</Text>
+          )}
+        </Pressable>
+      </View>
+
+      <Pressable onPress={signOut} style={styles.signOutButton}>
+        <Text style={styles.signOutText}>Sair</Text>
+      </Pressable>
+    </ScrollView>
   );
 }

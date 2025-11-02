@@ -135,6 +135,21 @@ class UserController {
       next(error);
     }
   }
+  public async updateAvatar(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    const { user } = res.locals;
+    const { avatarUrl } = req.params;
+
+    try {
+      await userModel.updateOne(user, { $set: { avatar: avatarUrl } });
+      res.status(200).json({ message: 'Avatar atualizado com sucesso' });
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao atualizar avatar' });
+    }
+  }
 }
 
 export default new UserController();

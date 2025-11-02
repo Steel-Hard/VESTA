@@ -7,12 +7,13 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
+import { useLocalSearchParams } from "expo-router";
 
 export default function MonitoringScreen() {
-  const [elderName, setElderName] = useState("Monise Souza");
-  const [elderAge, setElderAge] = useState(85);
+  const {name, birthDate, deviceId} = useLocalSearchParams();
+ 
+  console.log(`destino result:  ${name}`);
   const [heartRate, setHeartRate] = useState(70);
   const [isSafe, setIsSafe] = useState(true);
   const [deviceConnected, setDeviceConnected] = useState(true);
@@ -32,13 +33,6 @@ export default function MonitoringScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <StatusBar style="light" />
-
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Monitoramento</Text>
-      </View>
-
       {/* Content */}
       <View style={styles.content}>
         {/* Perfil */}
@@ -59,8 +53,8 @@ export default function MonitoringScreen() {
             </View>
 
             <View style={styles.profileInfo}>
-              <Text style={styles.elderName}>{elderName}</Text>
-              <Text style={styles.elderAge}>{elderAge} Anos</Text>
+              <Text style={styles.elderName}>{name}</Text>
+              <Text style={styles.elderAge}>{12} Anos</Text>
               <Text style={styles.monitoringDate}>
                 Monitorado desde 15/01/2024
               </Text>
