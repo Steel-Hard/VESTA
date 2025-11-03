@@ -6,6 +6,9 @@ import { jwtSecret } from '../middlewares/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../config';
 import mongoose from 'mongoose';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+import * as fsExtra from 'fs-extra';
 
 class UserController {
   //TODO: VERIFICAR OS TRATAMENDO DE ERROS
@@ -55,6 +58,7 @@ class UserController {
               name: data.name,
               email: data.email,
               elderly: data.eldely,
+              avatar: data.avatar,
             },
           });
         })
@@ -133,6 +137,74 @@ class UserController {
       res.status(200).json({ message: 'Senha atualizada com sucesso' });
     } catch (error) {
       next(error);
+    }
+  }
+
+  public async updateAvatar(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    const { user } = res.locals;
+
+    if (!req.file) {
+      res.status(400).json({ error: 'No file uploaded' });
+      return;
+    }
+
+    try {
+      const filePath = req.file.path;
+      cloudinary.config({
+        cloud_name: config.CLOUDNARY_NAME,
+        api_key: config.CLOUDNARY_API_KEY,
+        api_secret: config.CLOUDNARY_API_SECRET,
+      });
+
+      // Buscar usuário atual
+      const currentUser = await userModel.findById(user);
+
+      // Se existe avatar anterior, tenta deletar
+      if (currentUser?.avatar) {
+        try {
+          const oldPublicId = currentUser.avatar
+            .split('/')
+            .slice(-1)[0]
+            .split('.')[0];
+          if (oldPublicId) {
+            await cloudinary.uploader.destroy(`vesta/${oldPublicId}`);
+          }
+        } catch (error) {
+          console.error('Error deleting old image:', error);
+        }
+      }
+
+      // Upload da nova imagem
+      const publicId = `user_${user}_${Date.now()}`;
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: 'vesta',
+        public_id: publicId,
+        overwrite: true,
+        transformation: [
+          { width: 500, height: 500, crop: 'fill' },
+          { quality: 'auto' },
+        ],
+      });
+
+      // Remover arquivo temporário
+      fs.unlinkSync(filePath);
+
+      await userModel.updateOne(
+        { _id: user },
+        { $set: { avatar: result.secure_url } },
+      );
+
+      res.status(200).json({
+        message: 'Avatar atualizado com sucesso',
+        url: result.secure_url,
+      });
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      res.status(500).json({ error: 'Erro ao atualizar avatar' });
     }
   }
 }

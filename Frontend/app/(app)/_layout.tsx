@@ -1,56 +1,37 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 export default function AppLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarShowLabel: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: "#7E57C2",
+      }}
+    >
       <Tabs.Screen
-        name="home"
+        name="elder"
         options={{
-          tabBarIcon: () => {
-            return (
-              <MaterialIcons name="desktop-windows" size={24} color="black" />
-            );
+          tabBarIcon: ({ color }) => {
+            return <Ionicons name="desktop-outline" size={28} color={color} />;
           },
         }}
       />
+
       <Tabs.Screen
         name="history"
         options={{
-          tabBarIcon: () => {
-            return (
-               <Ionicons name="time-outline" size={28} color="black" />
-            );
+          tabBarIcon: ({color}) => {
+            return <Ionicons name="time-outline" size={28} color={color} />;
           },
         }}
       />
-        <Tabs.Screen
-          name="elder"
-          options={{
-            tabBarIcon: () => {
-              return (
-                <Ionicons name="settings-outline" size={28} color="black" />
-              );
-            },
-          }}
-        />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: () => {
-            return (
-                <Ionicons name="person-outline" size={28} color="black" />
-            );
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="test"
-        options={{
-          tabBarIcon: () => {
-            return (
-                <Ionicons name="logo-gitlab" size={28} color="black" />
-            );
+          tabBarIcon: ({color}) => {
+            return <Ionicons name="person-outline" size={28} color={color} />;
           },
         }}
       />

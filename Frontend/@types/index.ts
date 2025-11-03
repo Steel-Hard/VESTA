@@ -18,7 +18,7 @@ export interface IAuthData{
 
 // Tipos para o idoso monitorado
 export interface Elderly {
-  id: string;
+  _id: string;
   name: string;
   age: number;
   medicalConditions?: string[];
