@@ -1,0 +1,213 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 30,
+  },
+  input: {
+    width: "100%",
+    backgroundColor: "#F0F0F0",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  card: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  cardGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%",
+    padding: 16,
+  },
+  listContent: {
+    padding: 12,
+    width: "100%",
+    alignItems: "center",
+  },
+  elderCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 22,
+    marginBottom: 16,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  elderName: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 12,
+  },
+  inputFocus: {
+    borderColor: "#7B4AE2",
+    borderWidth: 2,
+    backgroundColor: "#f0f8ff",
+    shadowColor: "#007bff",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  button: {
+    backgroundColor: "#7B4AE2",
+    padding: 15,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  loginText: {
+    marginTop: 20,
+    color: "#555",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  link: {
+    marginLeft: 8,
+    color: "#7B4AE2",
+    fontWeight: "700",
+  },
+  helperText: {
+    color: "#666",
+    marginBottom: 8,
+  },
+  iconContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 90,
+    backgroundColor: "#F1F1F1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 32,
+    backgroundColor: "#fff",
+  },
+  headerContainer: {
+    alignItems: "center",
+    paddingVertical: 32,
+  },
+  changePhotoButton: {
+    marginTop: 12,
+    padding: 8,
+  },
+  changePhotoText: {
+    color: "#7B4AE2",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  formContainer: {
+    paddingHorizontal: 24,
+    width: "100%",
+  },
+
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  updateButton: {
+    backgroundColor: "#7B4AE2",
+    padding: 15,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+    marginTop: 24,
+  },
+  signOutButton: {
+    backgroundColor: "#ff4444",
+    padding: 15,
+    borderRadius: 10,
+    marginHorizontal: 24,
+    marginTop: 20,
+    marginBottom: 24,
+  },
+  signOutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 32,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  errorText: {
+    color: '#ff375b',
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  selectedImageIcon: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+},
+
+
+});

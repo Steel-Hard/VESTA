@@ -1,17 +1,24 @@
 // Tipos para o usuário cuidador/familiar
-export interface User {
+export interface UserDTO {
   id: string;
   name: string;
   email: string;
+  avatar: string;
   phone: string;
-  relationship: 'family' | 'caregiver' | 'nurse';
   createdAt: Date;
   updatedAt: Date;
 }
 
+
+export interface IAuthData{
+  user: UserDTO;
+  token: string;
+  refresh_token: string;
+}
+
 // Tipos para o idoso monitorado
 export interface Elderly {
-  id: string;
+  _id: string;
   name: string;
   age: number;
   medicalConditions?: string[];

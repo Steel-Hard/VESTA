@@ -1,4 +1,4 @@
-import mongoose, { SchemaDefinitionProperty } from 'mongoose';
+import mongoose, { mongo, SchemaDefinitionProperty } from 'mongoose';
 import elderSchema from './elder';
 
 const userSchema = new mongoose.Schema({
@@ -11,15 +11,25 @@ const userSchema = new mongoose.Schema({
   name: { type: String, require: true },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
-    validate: {
-      validator: function (e: string) {
-        return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(e);
+    validate: [
+      {
+        validator: function (e: string) {
+          return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(e);
+        },
+        message: (e: SchemaDefinitionProperty) =>
+          `${e.toString()} não é um email valido.`,
       },
-      message: (e: SchemaDefinitionProperty) =>
-        `${e.toString()} não é um email valido.`,
-    },
+      {
+        validator: async (value: string) => {
+          const existing = await mongoose.models.User.findOne({ email: value });
+
+          return !existing;
+        },
+        message: 'Esse é um e-mail já registrado.',
+      },
+    ],
   },
   password: { type: String, min: 6, max: 12 },
   phoneNumber: { type: String, require: false },

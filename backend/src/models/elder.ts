@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 
 const elderSchema = new mongoose.Schema({
-  name: { type: String, require: true },
-  birthDate: { type: Date, require: true },
-  deviceId: { type: String, unique: true, require: true, sparse: true},
+  name: { type: String, required: true },
+  birthDate: { type: Date, required: true },
+  deviceId: { type: String, required: true },
+  imageUrl: { type: String, required: false },
 });
 
 export default elderSchema;
