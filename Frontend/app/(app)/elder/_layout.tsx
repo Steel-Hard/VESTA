@@ -23,7 +23,13 @@ export default function ElderLayout() {
           title: "Monitoramento de Idoso",
           headerTitleAlign: "center",
         }}
-        
+      />
+      <Stack.Screen
+        name="comorbity"
+        options={{
+          title: "Cadastrar comorbidade",
+          headerTitleAlign: "center",
+        }}
       />
     </Stack>
   );
