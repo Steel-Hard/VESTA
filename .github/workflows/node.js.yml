@@ -1,42 +1,44 @@
-name: Node.js CI/CD
+name: Backend CI
 
 on:
   push:
     paths:
       - 'backend/**'
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
     paths:
       - 'backend/**'
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
+  workflow_dispatch:
 
 jobs:
   build:
+    name: Build and Test Backend
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend   # todos os comandos executam dentro de /backend
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Define o working directory DEPOIS do checkout
-      - name: Setup defaults
-        run: echo "defaults: run: working-directory=backend" >> $GITHUB_ENV
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
-        working-directory: backend
         run: npm ci
 
       - name: Run lint
-        working-directory: backend
         run: npm run lint:fix
 
       - name: Run tests
-        working-directory: backend
         run: npm test
+
+      - name: Build project
+        run: npm run build
