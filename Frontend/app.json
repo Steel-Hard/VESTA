@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.googleauth.ios",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "bundleIdentifier": "com.googleauth.android",
@@ -30,16 +33,30 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-google-signin/google-signin",
+      "@notifee/react-native",
+      // "@react-native-google-signin/google-signin",
+      // [
+      //   "expo-splash-screen",
+      //   {
+      //     "image": "./assets/images/splash-icon.png",
+      //     "imageWidth": 200,
+      //     "resizeMode": "contain",
+      //     "backgroundColor": "#ffffff",
+      //     "dark": {
+      //       "backgroundColor": "#000000"
+      //     }
+      //   }
+      // ],
       [
-        "expo-splash-screen",
+        "expo-build-properties",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
           }
         }
       ]
@@ -51,9 +68,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "565b57a8-96da-4763-8f4c-8733efa1767d"
+        "projectId": "b4f3ab65-b641-4fdf-9b11-313ac68bb397"
       }
     },
-    "owner": "masteryodaaa"
+    "owner": "roquel"
   }
 }
