@@ -34,6 +34,7 @@ export default function SignIn() {
   const { signIn } = useAuth();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
+     iosClientId: "",
     androidClientId: "",
     webClientId: "",
     redirectUri,
