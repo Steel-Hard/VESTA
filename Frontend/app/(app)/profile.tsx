@@ -21,6 +21,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Loading from "@/components/Loading";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
   const SIZE = 150;
@@ -32,6 +33,7 @@ export default function Profile() {
   useWindowDimensions();
 
   const { updateUserProfile, user, signOut } = useAuth();
+  const router = useRouter();
 
   const {
     control,
@@ -228,7 +230,18 @@ export default function Profile() {
         </Pressable>
       </View>
 
-      <Pressable onPress={signOut} style={styles.signOutButton}>
+      <Pressable 
+        onPress={async () => {
+          try {
+            await signOut();
+            // Navega para a tela de login após logout
+            router.replace("/(auth)/sign-in");
+          } catch (error) {
+            console.error("Erro ao fazer logout:", error);
+          }
+        }} 
+        style={styles.signOutButton}
+      >
         <Text style={styles.signOutText}>Sair</Text>
       </Pressable>
     </ScrollView>

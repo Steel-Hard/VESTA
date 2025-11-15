@@ -15,6 +15,7 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 export type AuthContextDataProps = {
   user: UserDTO;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: (accessToken: string) => Promise<void>;
   signOut: () => Promise<void>;
   isLoading: boolean;
   updateUserProfile: (userUpdated: UserDTO) => Promise<void>;
@@ -54,11 +55,24 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   };
 
   const signIn = async (email: string, password: string) => {
-    console.log("chego no signin")
+    setIsLoading(true);
     try {
         const { data } = await api.post<IAuthData>("/auth/signin", { email, password });
-        console.log("data: " + data.user.email)
-        console.log(user)
+      if (data.user && data.token) {
+        await storageUserAndToken(data.user, data.token);
+        userAndTokenUpdate(data.user, data.token);
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signInWithGoogle = async (accessToken: string) => {
+    setIsLoading(true);
+    try {
+      const { data } = await api.post<IAuthData>("/auth/google", { accessToken });
       if (data.user && data.token) {
         await storageUserAndToken(data.user, data.token);
         userAndTokenUpdate(data.user, data.token);
@@ -113,7 +127,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, signIn, signOut, isLoading, updateUserProfile }}
+      value={{ user, signIn, signInWithGoogle, signOut, isLoading, updateUserProfile }}
     >
       {children}
     </AuthContext.Provider>
