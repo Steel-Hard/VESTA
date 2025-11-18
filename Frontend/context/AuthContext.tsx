@@ -69,10 +69,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   };
 
-  const signInWithGoogle = async (accessToken: string) => {
+  const signInWithGoogle = async (idToken: string) => {
     setIsLoading(true);
     try {
-      const { data } = await api.post<IAuthData>("/auth/google", { accessToken });
+      const { data } = await api.post<IAuthData>(`/auth/google/${idToken}`);
       if (data.user && data.token) {
         await storageUserAndToken(data.user, data.token);
         userAndTokenUpdate(data.user, data.token);

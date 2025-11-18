@@ -20,4 +20,6 @@ routes.patch(
   userController.updateAvatar,
 );
 
+routes.put('/pushToken', authenticateToken, userController.updatePushToken);
+
 export default routes;

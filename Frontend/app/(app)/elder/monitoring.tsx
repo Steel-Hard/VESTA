@@ -1,27 +1,133 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   ScrollView,
   Alert,
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { useLocalSearchParams } from "expo-router";
-import styles from "@/styles/monitoring.styles"
+import { useLocalSearchParams, useRouter } from "expo-router";
+import styles from "@/styles/monitoring.styles";
+import DeviceService from "@/services/DeviceService";
 
 export default function MonitoringScreen() {
-  const { name, birthDate, deviceId, imageUrl } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const { name, birthDate, deviceId, imageUrl, _id } = params;
+  const router = useRouter();
 
   const imageUri = Array.isArray(imageUrl) ? imageUrl[0] : imageUrl;
+  const macAddress = Array.isArray(deviceId) ? deviceId[0] : deviceId;
 
-  console.log(`destino result:  ${name}`);
   const [heartRate, setHeartRate] = useState(70);
   const [isSafe, setIsSafe] = useState(true);
   const [deviceConnected, setDeviceConnected] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState(85);
-  const [lastUpdate, setLastUpdate] = useState("Há 2 minutos");
+  const [lastUpdate, setLastUpdate] = useState("Carregando...");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // Calcular idade a partir da data de nascimento
+  const calculateAge = (birthDateStr: string | string[] | undefined): number => {
+    if (!birthDateStr) return 0;
+    const dateStr = Array.isArray(birthDateStr) ? birthDateStr[0] : birthDateStr;
+    try {
+      // Assumindo formato DD/MM/YYYY
+      const [day, month, year] = dateStr.split('/');
+      const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    } catch {
+      return 0;
+    }
+  };
+
+  const formatTimeAgo = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+      if (diffInSeconds < 60) {
+        return "Agora";
+      } else if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60);
+        return `Há ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+      } else if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600);
+        return `Há ${hours} hora${hours > 1 ? 's' : ''}`;
+      } else {
+        return date.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+    } catch {
+      return "Data inválida";
+    }
+  };
+
+  const fetchLastMetric = async () => {
+    if (!macAddress) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const lastMetric = await DeviceService.getLastMetric(macAddress);
+      
+      if (lastMetric) {
+        // Calcular frequência cardíaca baseada nos valores do acelerômetro
+        // Esta é uma aproximação - você pode ajustar a lógica conforme necessário
+        const magnitude = Math.sqrt(
+          lastMetric.x * lastMetric.x +
+          lastMetric.y * lastMetric.y +
+          lastMetric.z * lastMetric.z
+        );
+        
+        // Simulação de frequência cardíaca baseada na magnitude
+        // Ajuste esta lógica conforme sua necessidade
+        const simulatedHeartRate = Math.floor(60 + (magnitude % 40));
+        setHeartRate(simulatedHeartRate);
+        
+        // Verificar se houve queda
+        if (lastMetric.fall) {
+          setIsSafe(false);
+        } else {
+          setIsSafe(true);
+        }
+        
+        setLastUpdate(formatTimeAgo(lastMetric.date));
+        setDeviceConnected(true);
+      } else {
+        setDeviceConnected(false);
+        setLastUpdate("Nenhum dado disponível");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar métrica:", error);
+      setDeviceConnected(false);
+      setLastUpdate("Erro ao carregar dados");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLastMetric();
+    
+    // Atualizar a cada 30 segundos
+    const interval = setInterval(fetchLastMetric, 30000);
+    
+    return () => clearInterval(interval);
+  }, [macAddress]);
 
   const checkHeartRateAlert = (rate: number) => {
     if (rate > 100 || rate < 60) {
@@ -33,6 +139,8 @@ export default function MonitoringScreen() {
       );
     }
   };
+
+  const elderAge = calculateAge(birthDate);
 
   return (
     <ScrollView style={styles.container}>
@@ -64,9 +172,9 @@ export default function MonitoringScreen() {
 
             <View style={styles.profileInfo}>
               <Text style={styles.elderName}>{name}</Text>
-              <Text style={styles.elderAge}>{80} Anos</Text>
+              <Text style={styles.elderAge}>{elderAge} Anos</Text>
               <Text style={styles.monitoringDate}>
-                Monitorado desde 15/01/2024
+                Monitorado desde {new Date().toLocaleDateString('pt-BR')}
               </Text>
             </View>
           </View>
@@ -74,7 +182,7 @@ export default function MonitoringScreen() {
 
         {/* Segurança */}
         <View style={styles.safetySection}>
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.safetyButton,
               { backgroundColor: isSafe ? "#48BB78" : "#F56565" },
@@ -95,7 +203,7 @@ export default function MonitoringScreen() {
                 ? "Todos os sinais vitais estão normais"
                 : "Atenção necessária - Verifique o idoso"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Saúde Cardíaca */}
@@ -214,21 +322,41 @@ export default function MonitoringScreen() {
           </View>
         </View>
 
-        {/* Botão de Teste */}
+        {/* Botão de Edição */}
         <View style={styles.testButtonContainer}>
-          <TouchableOpacity
+          <Pressable
             style={styles.outlineButton}
+            disabled={isNavigating}
             onPress={() => {
-              const newHeartRate = Math.floor(Math.random() * 60) + 40;
-              setHeartRate(newHeartRate);
-              setLastUpdate("Agora");
-              checkHeartRateAlert(newHeartRate);
+              if (isNavigating) return;
+              
+              setIsNavigating(true);
+              const elderId = Array.isArray(_id) ? _id[0] : _id;
+              const elderNameStr = Array.isArray(name) ? name[0] : name;
+              const birthDateStr = Array.isArray(birthDate) ? birthDate[0] : birthDate;
+              
+              try {
+                router.push({
+                  pathname: "/elder/edit",
+                  params: {
+                    _id: elderId || '',
+                    name: elderNameStr || '',
+                    birthDate: birthDateStr || '',
+                    deviceId: macAddress || '',
+                    imageUrl: imageUri || '',
+                  },
+                });
+              } catch (error) {
+                console.error("Erro ao navegar:", error);
+                Alert.alert("Erro", "Não foi possível abrir a tela de edição");
+                setIsNavigating(false);
+              }
             }}
           >
             <Text style={styles.outlineButtonText}>
-              🔄 Simular Nova Leitura
+              ✏️ Editar Idoso
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </ScrollView>

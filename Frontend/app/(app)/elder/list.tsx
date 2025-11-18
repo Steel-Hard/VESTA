@@ -11,9 +11,10 @@ import { styles } from "@/styles";
 import { ElderCard } from "@/components/ElderCard";
 import { api } from "@/services/api";
 import { setElders, ApiData } from "@/store/slices/elderSlice";
-import {  Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-
+import { useAuth } from "@/hooks/useAuth";
+import { usePushToken } from "@/hooks/usePushToken";
 
 interface Elder {
   _id: string;
@@ -24,6 +25,9 @@ interface Elder {
 }
 
 export default function Listas() {
+  const token = usePushToken();
+  const { user } = useAuth();
+
   const elders: Elder[] = useSelector((state: any) => {
     return state.elder?.elders ?? state.elder?.list ?? [];
   });
@@ -50,7 +54,7 @@ export default function Listas() {
     const fetchElders = async () => {
       try {
         const { data } = await api.get<ApiData>("/elder");
-        const list = data.eldely
+        const list = data.eldely;
         dispatch(setElders(list as Elder[]));
       } catch (error) {
         console.error(error);
@@ -60,6 +64,20 @@ export default function Listas() {
     };
     fetchElders();
   }, [dispatch]);
+
+  useEffect(() => {
+    const sendPushToken = async () => {
+      if (token && user) {
+        try {
+          await api.put("/auth/pushToken", { pushToken: token });
+          console.log("Push token enviado ao backend");
+        } catch (err) {
+          console.error("Erro ao enviar pushToken ao backend:", err);
+        }
+      }
+    };
+    sendPushToken();
+  }, [token, user]);
 
   const EmptyList = () => (
     <View style={styles.emptyContainer}>
@@ -90,7 +108,6 @@ export default function Listas() {
           />
         )}
         contentContainerStyle={styles.listContent}
-        
         ListEmptyComponent={EmptyList}
       />
 

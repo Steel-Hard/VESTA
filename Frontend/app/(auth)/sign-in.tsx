@@ -7,18 +7,13 @@ import {
   Alert,
   Keyboard,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { styles } from "@/styles";
 import Input from "@/components/Input";
 import { Ionicons } from "@expo/vector-icons";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
-import { makeRedirectUri } from "expo-auth-session";
-import Constants from "expo-constants";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { validadeSchemaSignIn } from "@/validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -26,14 +21,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppError } from "@/utils/AppError";
 import vestaLogo from "@/assets/images/vesta-logo.png";
 
-
-WebBrowser.maybeCompleteAuthSession();
-const redirectUri = makeRedirectUri();
-
 type FormData = {
   email: string;
   password: string;
 };
+
 
 export default function SignIn() {
   const { signIn, signInWithGoogle } = useAuth();
@@ -41,27 +33,53 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = React.useState(false);
 
-  const googleClientIds = {
-    iosClientId: Constants.expoConfig?.extra?.googleIosClientId || "",
-    androidClientId: Constants.expoConfig?.extra?.googleAndroidClientId || "",
-    webClientId: Constants.expoConfig?.extra?.googleWebClientId || "",
-  };
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: googleClientIds.iosClientId,
-    androidClientId: googleClientIds.androidClientId,
-    webClientId: googleClientIds.webClientId,
-    redirectUri,
-  });
+  React.useEffect(() => {
+    const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || process.env.EXPO_PUBLIC_CLIENT_ID || "";
+    const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_CLIENT_ID || "";
 
-  const handleGoogleSignIn = React.useCallback(async (accessToken: string) => {
+    if (webClientId && iosClientId) {
+      GoogleSignin.configure({
+        webClientId: webClientId,
+        iosClientId: iosClientId,
+        offlineAccess: true,
+        forceCodeForRefreshToken: true,
+      });
+      console.log("Google Sign In configurado com sucesso");
+      console.log("Web Client ID:", webClientId.substring(0, 30) + "...");
+      console.log("iOS Client ID:", iosClientId.substring(0, 30) + "...");
+    } else {
+      console.warn("⚠️ GOOGLE_WEB_CLIENT_ID não encontrado no .env");
+      console.warn("Verifique se EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID está definido no arquivo .env");
+    }
+  }, []);
+
+  const handleGooglePress = async () => {
     setIsLoadingGoogle(true);
     Keyboard.dismiss();
+    
     try {
-      await signInWithGoogle(accessToken);
-      // Navega para a tela principal após login bem-sucedido
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const userInfo = await GoogleSignin.signIn();
+      
+      // A biblioteca retorna idToken e serverAuthCode
+      const idToken = userInfo.data?.idToken;
+      const serverAuthCode = userInfo.data?.serverAuthCode;
+      
+      const tokenToSend = idToken || serverAuthCode;
+      
+      if (!tokenToSend) {
+        throw new Error("Token não encontrado na resposta do Google");
+      }
+
+      await signInWithGoogle(tokenToSend);
+      
       router.replace("/(app)/elder/list");
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED || error.code === statusCodes.IN_PROGRESS) {
+        return;
+      }
+      
       const isAppError = error instanceof AppError;
       const title = isAppError
         ? error.message
@@ -69,33 +87,6 @@ export default function SignIn() {
       Alert.alert("Erro", title);
     } finally {
       setIsLoadingGoogle(false);
-    }
-  }, [signInWithGoogle, router]);
-
-  React.useEffect(() => {
-    if (response?.type === "success") {
-      const { authentication } = response;
-      if (authentication?.accessToken) {
-        handleGoogleSignIn(authentication.accessToken);
-      }
-    } else if (response?.type === "error") {
-      setIsLoadingGoogle(false);
-      Alert.alert(
-        "Erro",
-        "Não foi possível fazer login com Google. Tente novamente."
-      );
-    } else if (response?.type === "cancel") {
-      setIsLoadingGoogle(false);
-    }
-  }, [response, handleGoogleSignIn]);
-
-  const handleGooglePress = async () => {
-    setIsLoadingGoogle(true);
-    try {
-      await promptAsync();
-    } catch (error) {
-      setIsLoadingGoogle(false);
-      Alert.alert("Erro", "Não foi possível abrir a autenticação do Google.");
     }
   };
   const { control, handleSubmit } = useForm({
@@ -112,7 +103,6 @@ export default function SignIn() {
     Keyboard.dismiss();
     try {
       await signIn(email, password);
-      // Navega para a tela principal após login bem-sucedido
       router.replace("/(app)/elder/list");
     } catch (error) {
       const isAppError = error instanceof AppError;
