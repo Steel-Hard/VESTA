@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "702999832579",
+    "project_id": "auth-473723",
+    "storage_bucket": "auth-473723.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702999832579:android:9fc3cd8522133f724f8636",
+        "android_client_info": {
+          "package_name": "com.steelhard.vesta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702999832579-qpcdt385d0ceoitm7dq2ce2mla4jbkg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEnPYatRDXoCkosKLj7sUQBiCpPNFYJBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702999832579-qpcdt385d0ceoitm7dq2ce2mla4jbkg6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "702999832579-o01459a4l3i1emh1o2slkd5oqfb834qh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.steelhard.vesta"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

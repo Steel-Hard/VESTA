@@ -23,7 +23,13 @@ export default function ElderLayout() {
           title: "Monitoramento de Idoso",
           headerTitleAlign: "center",
         }}
-        
+      />
+      <Stack.Screen
+        name="edit"
+        options={{
+          title: "Editar Idoso",
+          headerTitleAlign: "center",
+        }}
       />
     </Stack>
   );

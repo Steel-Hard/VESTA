@@ -22,15 +22,16 @@ export default function AppLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          tabBarIcon: ({color}) => {
+          tabBarIcon: ({ color }) => {
             return <Ionicons name="time-outline" size={28} color={color} />;
           },
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({color}) => {
+          tabBarIcon: ({ color }) => {
             return <Ionicons name="person-outline" size={28} color={color} />;
           },
         }}
