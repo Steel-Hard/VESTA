@@ -28,7 +28,8 @@
       "permissions": [
         "RECEIVE_BOOT_COMPLETED"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "compileSdkVersion": 35
     },
     "web": {
       "output": "static",
