@@ -7,9 +7,9 @@ import {
   ScrollView,
   View,
   Pressable,
-  Alert,
   KeyboardAvoidingView,
   Platform,
+  ToastAndroid,
 } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useForm, Controller } from "react-hook-form";
@@ -43,13 +43,18 @@ export default function SignUp() {
     resolver: yupResolver(validateSchemaSignUp),
   });
 
-  //TODO:  verificar com algum componente toast ou alerta ou aviso na tela
-  const handlerError = (error: any) => console.log("Form Errors:", error);
+  const handlerError = (error: any) => {
+    Object.values(error).forEach((field: any) => {
+      ToastAndroid.show(field.message, ToastAndroid.SHORT);
+    });
+  };
 
   const handlerSignUp = async ({ name, email, password }: FormData) => {
     setIsLoading(true);
     try {
       await api.post("/auth/signup", { name, email, password });
+
+      ToastAndroid.show("Cadastro realizado com sucesso", ToastAndroid.SHORT);
 
       await signIn(email, password);
     } catch (error) {
@@ -59,23 +64,32 @@ export default function SignUp() {
 
       const title = isAppError
         ? error.message
-        : "Não foi possivel cadastrar. Tente novamente mais tarde";
+        : "Não foi possível cadastrar. Tente novamente mais tarde";
 
-      Alert.alert("Erro", title);
+      ToastAndroid.show(title, ToastAndroid.LONG);
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "white"  }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={{
+          paddingTop: 20,
+          ...styles.container,
+        }}
         keyboardShouldPersistTaps="handled"
+        scrollEnabled={true}
       >
-        <Text style={styles.title}>Cadastro</Text>
+        <Text style={styles.title}>Crie Sua Conta</Text>
+        <Text style={{ textAlign: "center", marginBottom: 24, color: "#666" }}>
+          Preencha seus dados para começar
+        </Text>
 
         <Controller
           control={control}
@@ -87,10 +101,11 @@ export default function SignUp() {
               value={value}
               onChangeText={onChange}
               keyboardType="default"
-              autoCapitalize="none"
+              autoCapitalize="words"
             />
           )}
         />
+
         <Controller
           control={control}
           name="email"
@@ -101,9 +116,11 @@ export default function SignUp() {
               keyboardType="email-address"
               value={value}
               onChangeText={onChange}
+              autoCapitalize="none"
             />
           )}
         />
+
         <Controller
           control={control}
           name="password"
@@ -117,6 +134,7 @@ export default function SignUp() {
             />
           )}
         />
+
         <Controller
           control={control}
           name="password_confirm"
@@ -136,13 +154,15 @@ export default function SignUp() {
           onPress={handleSubmit(handlerSignUp, handlerError)}
           disabled={isLoading}
         >
-          <Text style={styles.buttonText}>Cadastrar</Text>
+          <Text style={styles.buttonText}>
+            {isLoading ? "Criando conta..." : "Criar Conta"}
+          </Text>
         </Pressable>
 
         <View style={styles.row}>
-          <Text>Já tem conta?</Text>
+          <Text>Já tem conta? </Text>
           <Link href="/sign-in" style={styles.link}>
-            Entrar na conta
+            Entrar
           </Link>
         </View>
       </ScrollView>

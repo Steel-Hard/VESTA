@@ -142,7 +142,7 @@ export default function SignIn() {
         name="password"
         render={({ field: { onChange, value } }) => (
           <Input
-            placeholder="Password"
+            placeholder="Senha"
             autoCapitalize="none"
             secureTextEntry
             value={value}
@@ -182,7 +182,7 @@ export default function SignIn() {
           </>
         )}
       </Pressable>
-      <View style={styles.row}>
+      <View style={[styles.row, { marginTop: 30, marginBottom: 40 }]}>
         <Text>Ainda não tem conta?</Text>
         <Link href="/sign-up" style={styles.link}>
           Cadastre-se

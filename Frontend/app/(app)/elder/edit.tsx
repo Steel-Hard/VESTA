@@ -21,7 +21,7 @@ import {
 import ElderService from "@/services/ElderService";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch } from "react-redux";
-
+import {removeElder  } from "@/store/slices/elderSlice";
 export default function EditElderScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -121,8 +121,10 @@ export default function EditElderScreen() {
             try {
               setIsLoading(true);
               await ElderService.deleteElder(elderId!);
+
               Alert.alert("Sucesso", "Idoso excluído com sucesso!");
-              router.back();
+              dispatch(removeElder({ _id: elderId } ));
+              router.navigate("/elder/list");
             } catch (error) {
               console.error("Erro:", error);
               Alert.alert("Erro", "Não foi possível excluir o idoso");

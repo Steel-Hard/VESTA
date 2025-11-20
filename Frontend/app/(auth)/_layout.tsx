@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 
 export default function AppLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: {backgroundColor: 'white'} }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="sign-in" />
       <Stack.Screen name="sign-up" />

@@ -14,21 +14,24 @@ export function usePushToken() {
       }
 
       const expoToken = (await Notifications.getExpoPushTokenAsync()).data;
-      
+
       setToken(expoToken);
 
       if (Platform.OS === "android") {
         await Notifications.setNotificationChannelAsync("default", {
           name: "default",
-          importance: Notifications.AndroidImportance.MAX
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          enableVibrate: true,
+          sound: "default",
         });
       }
     }
 
     register();
   }, []);
-  
+
   console.log("Push Token:", token);
-  
+
   return token;
 }

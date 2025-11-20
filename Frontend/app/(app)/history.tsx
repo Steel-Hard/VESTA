@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, ActivityIndicator, Linking, ScrollView } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Linking, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "@/styles/history.styles";
 import DeviceService, { LastFallAlertResponse } from "@/services/DeviceService";
@@ -7,6 +7,7 @@ import DeviceService, { LastFallAlertResponse } from "@/services/DeviceService";
 export default function FallAlert() {
   const [alertData, setAlertData] = useState<LastFallAlertResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isResolving, setIsResolving] = useState(false);
 
   useEffect(() => {
     fetchLastAlert();
@@ -21,6 +22,7 @@ export default function FallAlert() {
       console.error("Erro ao buscar último alerta:", error);
     } finally {
       setIsLoading(false);
+      setIsResolving(false);
     }
   };
 
@@ -47,6 +49,40 @@ export default function FallAlert() {
     Linking.openURL('tel:');
   };
 
+  const handleMarkResolved = async () => {
+    if (!alertData) return;
+    // se já estiver resolvido, não tenta resolver novamente
+    if (alertData.metric?.isResolved) {
+      Alert.alert("Aviso", "Alerta já está marcado como resolvido.");
+      return;
+    }
+
+    if (!alertData.deviceId) {
+      console.error("Device ID ausente para resolver alerta");
+      Alert.alert("Erro", "Não foi possível identificar o dispositivo para resolver o alerta.");
+      return;
+    }
+
+    // usar alguma identificação do alerta; se não houver id claro, tentar usar a date como fallback
+    const alertId = alertData.metric?.date;
+    if (!alertId) {
+      console.error("Alert ID ausente para resolver alerta");
+      Alert.alert("Erro", "Não foi possível identificar o alerta para resolver.");
+      return;
+    }
+
+    try {
+      setIsResolving(true);
+      await DeviceService.markAlertAsResolved(alertData.deviceId, alertId);
+      Alert.alert("Sucesso", "Alerta marcado como resolvido.");
+      await fetchLastAlert(); // re-sincroniza e atualiza a tela
+    } catch (error) {
+      console.error("Erro ao marcar alerta como resolvido:", error);
+      Alert.alert("Erro", "Falha ao marcar alerta como resolvido.");
+      setIsResolving(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <ScrollView style={{ flex: 1, backgroundColor: "#F7FAFC" }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
@@ -58,6 +94,7 @@ export default function FallAlert() {
     );
   }
 
+  // Corrigida a condição: mostra "nenhum alerta" se não houver alertData ou hasAlert === false ou metric ausente
   if (!alertData || !alertData.hasAlert || !alertData.metric) {
     return (
       <ScrollView style={{ flex: 1, backgroundColor: "#F7FAFC" }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
@@ -67,10 +104,11 @@ export default function FallAlert() {
             {alertData?.message || "Nenhum alerta de queda encontrado"}
           </Text>
           <Pressable
-            style={[styles.button, styles.buttonGreen]}
+            style={[styles.button, { backgroundColor: "#7E57C2", marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "center" }]}
             onPress={fetchLastAlert}
           >
-            <Text style={styles.buttonText}>🔄 Atualizar</Text>
+             <Ionicons name="reload" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Atualizar</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -104,6 +142,10 @@ export default function FallAlert() {
             <Text style={styles.cardHour}>
               X: {alertData.metric.x.toFixed(2)} | Y: {alertData.metric.y.toFixed(2)} | Z: {alertData.metric.z.toFixed(2)}
             </Text>
+            {/* Indica se está resolvido */}
+            <Text style={[styles.cardText, { marginTop: 8 }]}>
+              Status: {alertData.metric.isResolved ? "Resolvido" : "Pendente"}
+            </Text>
           </View>
         )}
 
@@ -114,30 +156,21 @@ export default function FallAlert() {
           <Text style={styles.buttonText}>Ligar para o Idoso</Text>
         </Pressable>
 
+    
         <Pressable
-          style={[styles.button, styles.buttonRed]}
-          onPress={() => {
-            alert("Funcionalidade de notificar contatos em desenvolvimento");
-          }}
+          style={[styles.button, styles.buttonGreen, alertData.metric?.isResolved || isResolving ? { opacity: 0.6 } : {}]}
+          onPress={handleMarkResolved}
+          disabled={alertData.metric?.isResolved || isResolving}
         >
-          <Text style={styles.buttonText}>Notificar Contatos</Text>
+          <Text style={styles.buttonText}>{isResolving ? "Marcando..." : (alertData.metric?.isResolved ? "Resolvido" : "Marcar como Resolvido")}</Text>
         </Pressable>
 
         <Pressable
-          style={[styles.button, styles.buttonGreen]}
-          onPress={() => {
-            alert("Alerta marcado como resolvido");
-            fetchLastAlert();
-          }}
-        >
-          <Text style={styles.buttonText}>Marcar como Resolvido</Text>
-        </Pressable>
-
-        <Pressable
-          style={[styles.button, { backgroundColor: "#7E57C2", marginTop: 10 }]}
+          style={[styles.button, { backgroundColor: "#7E57C2", marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "center" }]}
           onPress={fetchLastAlert}
         >
-          <Text style={styles.buttonText}>🔄 Atualizar</Text>
+          <Ionicons name="reload" size={20} color="#fff" />
+          <Text style={styles.buttonText}> Atualizar</Text>
         </Pressable>
       </View>
     </ScrollView>
