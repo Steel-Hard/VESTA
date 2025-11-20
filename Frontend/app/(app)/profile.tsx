@@ -22,6 +22,18 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Loading from "@/components/Loading";
 import { useRouter } from "expo-router";
+import * as Notifications from 'expo-notifications';
+Notifications.scheduleNotificationAsync({
+  content: {
+    title: "default",
+    body: "Agora vai vibrar!",
+    sound: "default",
+  },
+  trigger: {
+    seconds: 10,
+    channelId: "alert-channel",   // ⚠️ Obrigatório!
+  },
+});
 
 export default function Profile() {
   const SIZE = 150;

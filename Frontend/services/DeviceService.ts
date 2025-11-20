@@ -1,11 +1,15 @@
 import { api } from "./api";
 
 export interface Metric {
+  _id: string; 
   x: number;
   y: number;
   z: number;
   fall: boolean;
   date: string;
+  isResolved: boolean;
+  resolvedAt: string;
+  resolvedBy: string;
 }
 
 export interface DeviceMetricsResponse {
@@ -56,7 +60,18 @@ class DeviceService {
       return null;
     }
   }
+
+  public async markAlertAsResolved(
+    deviceId: string,
+    alertId: string
+  ): Promise<void> {
+    try {
+      await api.post(`/device/resolveFallAlert/${deviceId}/${alertId}`);
+    } catch (error) {
+      console.error("Erro ao marcar alerta como resolvido:", error);
+      return Promise.reject(error);
+    }
+  }
 }
 
 export default new DeviceService();
-

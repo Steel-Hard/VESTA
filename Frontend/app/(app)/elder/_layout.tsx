@@ -13,7 +13,7 @@ export default function ElderLayout() {
       <Stack.Screen
         name="register"
         options={{
-          title: "Cadastro Idoso",
+          title: "Cadastro De Idoso",
           headerTitleAlign: "center",
         }}
       />

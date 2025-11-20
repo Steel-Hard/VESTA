@@ -4,6 +4,18 @@ import "@/global.css";
 import { AuthContextProvider } from "@/context/AuthContext";
 import { Provider } from "react-redux";
 import { store } from "@/store";
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({    
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+
 
 function RootLayoutNav() {
   return (
@@ -20,7 +32,7 @@ export default function RootLayout() {
     <Provider store={store}>
       <AuthContextProvider>
         <RootLayoutNav />
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
       </AuthContextProvider>
     </Provider>
   );
