@@ -20,30 +20,71 @@ export default function MonitoringScreen() {
   const imageUri = Array.isArray(imageUrl) ? imageUrl[0] : imageUrl;
   const macAddress = Array.isArray(deviceId) ? deviceId[0] : deviceId;
 
-  const [heartRate, setHeartRate] = useState(70);
   const [isSafe, setIsSafe] = useState(true);
   const [deviceConnected, setDeviceConnected] = useState(true);
-  const [batteryLevel, setBatteryLevel] = useState(85);
   const [lastUpdate, setLastUpdate] = useState("Carregando...");
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
 
-  // Calcular idade a partir da data de nascimento
+  /**
+   * Calcula a idade a partir de uma data de nascimento em formato DD/MM/YYYY ou ISO (YYYY-MM-DD)
+   * @param birthDateStr - Data de nascimento em formato DD/MM/YYYY ou ISO (YYYY-MM-DDTHH:MM:SS.SSSZ)
+   * @returns A idade em anos
+   */
   const calculateAge = (birthDateStr: string | string[] | undefined): number => {
     if (!birthDateStr) return 0;
+    
     const dateStr = Array.isArray(birthDateStr) ? birthDateStr[0] : birthDateStr;
+    
     try {
-      // Assumindo formato DD/MM/YYYY
-      const [day, month, year] = dateStr.split('/');
-      const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      let birthDate: Date;
+
+      // Detectar se é formato ISO (YYYY-MM-DDTHH:MM:SS.SSSZ ou YYYY-MM-DD)
+      if (dateStr.includes('T') || dateStr.includes('-')) {
+        // Formato ISO: 1998-03-03T03:00:00.000Z
+        birthDate = new Date(dateStr);
+        if (isNaN(birthDate.getTime())) {
+          console.error('Data ISO inválida:', dateStr);
+          return 0;
+        }
+      } else if (dateStr.includes('/')) {
+        // Formato DD/MM/YYYY
+        const parts = dateStr.trim().split('/');
+        if (parts.length !== 3) {
+          console.error('Formato de data inválido. Use DD/MM/YYYY:', dateStr);
+          return 0;
+        }
+
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+
+        if (isNaN(day) || isNaN(month) || isNaN(year)) {
+          console.error('Data contém valores inválidos:', dateStr);
+          return 0;
+        }
+
+        birthDate = new Date(year, month - 1, day);
+      } else {
+        console.error('Formato de data não reconhecido:', dateStr);
+        return 0;
+      }
+
       const today = new Date();
+
+      // Calcular diferença de anos
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      // Ajustar se ainda não completou aniversário neste ano
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
         age--;
       }
-      return age;
-    } catch {
+
+      return Math.max(0, age);
+    } catch (error) {
+      console.error('Erro ao calcular idade:', error);
       return 0;
     }
   };
@@ -85,25 +126,8 @@ export default function MonitoringScreen() {
       const lastMetric = await DeviceService.getLastMetric(macAddress);
       
       if (lastMetric) {
-        // Calcular frequência cardíaca baseada nos valores do acelerômetro
-        // Esta é uma aproximação - você pode ajustar a lógica conforme necessário
-        const magnitude = Math.sqrt(
-          lastMetric.x * lastMetric.x +
-          lastMetric.y * lastMetric.y +
-          lastMetric.z * lastMetric.z
-        );
-        
-        // Simulação de frequência cardíaca baseada na magnitude
-        // Ajuste esta lógica conforme sua necessidade
-        const simulatedHeartRate = Math.floor(60 + (magnitude % 40));
-        setHeartRate(simulatedHeartRate);
-        
-        // Verificar se houve queda
-        if (lastMetric.fall) {
-          setIsSafe(false);
-        } else {
-          setIsSafe(true);
-        }
+        // Atualizar status de segurança baseado na detecção de queda
+        setIsSafe(!lastMetric.fall);
         
         setLastUpdate(formatTimeAgo(lastMetric.date));
         setDeviceConnected(true);
@@ -128,17 +152,6 @@ export default function MonitoringScreen() {
     
     return () => clearInterval(interval);
   }, [macAddress]);
-
-  const checkHeartRateAlert = (rate: number) => {
-    if (rate > 100 || rate < 60) {
-      setIsSafe(false);
-      Alert.alert(
-        "Alerta de Frequência Cardíaca",
-        `Frequência cardíaca ${rate} BPM está fora do normal. Verifique o idoso.`,
-        [{ text: "OK", onPress: () => setIsSafe(true) }]
-      );
-    }
-  };
 
   const elderAge = calculateAge(birthDate);
 
@@ -172,7 +185,7 @@ export default function MonitoringScreen() {
 
             <View style={styles.profileInfo}>
               <Text style={styles.elderName}>{name}</Text>
-              <Text style={styles.elderAge}>{elderAge} Anos</Text>
+              <Text style={styles.elderAge}>{calculateAge(birthDate)} anos</Text>
               <Text style={styles.monitoringDate}>
                 Monitorado desde {new Date().toLocaleDateString('pt-BR')}
               </Text>
@@ -187,85 +200,19 @@ export default function MonitoringScreen() {
               styles.safetyButton,
               { backgroundColor: isSafe ? "#48BB78" : "#F56565" },
             ]}
-            onPress={() => {
-              setIsSafe(!isSafe);
-              if (!isSafe) checkHeartRateAlert(heartRate);
-            }}
           >
             <View style={styles.safetyButtonContent}>
-              <Icon name="bell" size={24} color="white" />
+              <Icon name={isSafe ? "check-circle" : "alert-circle"} size={24} color="white" />
               <Text style={styles.safetyButtonTitle}>
-                {isSafe ? "Em Segurança" : "Alerta de Emergência!"}
+                {isSafe ? "Em Segurança" : "Queda Detectada!"}
               </Text>
             </View>
             <Text style={styles.safetyButtonSubtitle}>
               {isSafe
-                ? "Todos os sinais vitais estão normais"
-                : "Atenção necessária - Verifique o idoso"}
+                ? "Sem detecção de queda"
+                : "Queda foi detectada - Verificação necessária"}
             </Text>
           </Pressable>
-        </View>
-
-        {/* Saúde Cardíaca */}
-        <View style={styles.heartSection}>
-          <Text style={styles.sectionTitle}>💓 Saúde Cardíaca</Text>
-
-          <View style={styles.heartCard}>
-            <View style={styles.heartContent}>
-              <View style={styles.heartIconContainer}>
-                <View style={styles.heartIconCircle}>
-                  <Icon name="heart" size={32} color="#F56565" />
-                </View>
-              </View>
-
-              <View style={styles.heartInfo}>
-                <View style={styles.heartRateContainer}>
-                  <Text
-                    style={[
-                      styles.heartRateText,
-                      {
-                        color:
-                          heartRate > 100 || heartRate < 60
-                            ? "#E53E3E"
-                            : "#48BB78",
-                      },
-                    ]}
-                  >
-                    {heartRate}
-                  </Text>
-                  <Text style={styles.bpmText}>BPM</Text>
-                </View>
-                <Text style={styles.heartRateLabel}>Batimentos por Minuto</Text>
-                <Text style={styles.lastUpdate}>
-                  Última atualização: {lastUpdate}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.progressContainer}>
-              <View style={styles.progressLabels}>
-                <Text style={styles.progressLabel}>Normal</Text>
-                <Text style={styles.progressLabel}>Alto</Text>
-              </View>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      backgroundColor:
-                        heartRate > 100 || heartRate < 60
-                          ? "#F56565"
-                          : "#48BB78",
-                      width: `${Math.min(
-                        Math.max(((heartRate - 40) / 80) * 100, 0),
-                        100
-                      )}%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          </View>
         </View>
 
         {/* Status do Dispositivo */}
@@ -289,27 +236,7 @@ export default function MonitoringScreen() {
                   { color: deviceConnected ? "#38A169" : "#E53E3E" },
                 ]}
               >
-                {deviceConnected ? "Conectado" : "Desconectado"}
-              </Text>
-            </View>
-
-            {/* Bateria */}
-            <View style={styles.deviceRow}>
-              <View style={styles.deviceInfo}>
-                <Icon
-                  name="battery"
-                  size={24}
-                  color={batteryLevel > 20 ? "#48BB78" : "#F56565"}
-                />
-                <Text style={styles.deviceLabel}>Bateria</Text>
-              </View>
-              <Text
-                style={[
-                  styles.deviceStatus,
-                  { color: batteryLevel > 20 ? "#38A169" : "#E53E3E" },
-                ]}
-              >
-                {batteryLevel}%
+                {deviceConnected ? "Sincronizado" : "Desincronizado"}
               </Text>
             </View>
 

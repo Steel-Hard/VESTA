@@ -106,7 +106,11 @@ class DeviceController {
       // Se detectou queda, enviar notificação push para usuários vinculados
       if (fall === true) {
         try {
-          await this.sendFallNotification(updatedDevice.macAddress, newMetric);
+          // use the class static method to avoid "this" being undefined when handlers are bound without context
+          await DeviceController.sendFallNotification(
+            updatedDevice.macAddress,
+            newMetric,
+          );
         } catch (notificationError) {
           console.error('Erro ao enviar notificação:', notificationError);
           // Não falha a requisição se a notificação falhar
@@ -120,7 +124,7 @@ class DeviceController {
     }
   }
 
-  private async sendFallNotification(
+  private static async sendFallNotification(
     macAddress: string,
     metric: IMetric,
   ): Promise<void> {
@@ -278,7 +282,6 @@ class DeviceController {
         });
       }
 
-      // Encontrar o nome do idoso vinculado a este dispositivo
       const elder = userData.eldely.find(
         (e) => e.deviceId === lastFallDevice.macAddress,
       );
