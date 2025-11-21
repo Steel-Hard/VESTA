@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import DeviceModel, { IMetric } from '../models/device';
 import userModel from '../models/user';
 import axios from 'axios';
+import mongoose from 'mongoose';
 
 class DeviceController {
   public async createDevice(req: Request, res: Response): Promise<Response> {
@@ -91,6 +92,9 @@ class DeviceController {
         z,
         fall,
         date: new Date().toISOString(),
+        isResolved: false,
+        resolvedAt: '',
+        resolvedBy: '',
       };
 
       const updatedDevice = await DeviceModel.findByIdAndUpdate(
@@ -299,6 +303,58 @@ class DeviceController {
     } catch (error) {
       console.error('Erro ao buscar último alerta:', error);
       return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  }
+  public async markAlertAsResolved(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { deviceId, alertId } = req.params;
+
+    try {
+      const userId = res.locals.user;
+
+      console.log('deviceId:', deviceId, 'alertId:', alertId);
+
+      if (!deviceId || !alertId) {
+        return res.status(400).json({
+          message: 'deviceId e alertId são obrigatórios',
+          received: { deviceId, alertId },
+        });
+      }
+
+      const result = await DeviceModel.updateOne(
+        { _id: deviceId, 'metric._id': alertId },
+        {
+          $set: {
+            'metric.$.isResolved': true,
+            'metric.$.resolvedAt': new Date().toISOString(),
+            'metric.$.resolvedBy': userId,
+          },
+        },
+      );
+
+      console.log('Update result:', result);
+
+      if (result.matchedCount === 0) {
+        return res
+          .status(404)
+          .json({ message: 'Dispositivo ou alerta não encontrado' });
+      }
+
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: 'Falha ao atualizar alerta' });
+      }
+
+      const updatedDevice = await DeviceModel.findById(deviceId);
+
+      return res.status(200).json({
+        message: 'Alerta resolvido com sucesso',
+        device: updatedDevice,
+      });
+    } catch (error) {
+      console.error('Erro ao resolver alerta:', error);
+      return res.status(500).json({ message: 'Erro ao resolver alerta' });
     }
   }
 }

@@ -132,26 +132,38 @@ class ElderController {
   async updateElderById(_req: Request, _res: Response) {
     const { user } = _res.locals;
     const { elderId } = _req.params;
+
     const { newElderName, newElderBirthDate, newElderDeviceId } = _req.body;
 
-    const updateElderObject = {
+    const parsedDate = new Date(newElderBirthDate);
+    if (isNaN(parsedDate.getTime())) {
+      return _res.status(400).json({ error: 'Data de nascimento inválida' });
+    }
+
+    const elderObject = {
       name: newElderName,
-      birthDate: new Date(newElderBirthDate),
+      birthDate: parsedDate,
       deviceId: newElderDeviceId,
-    } as IElder;
+    };
 
     try {
-      const updatedElder = await userModel.findByIdAndUpdate(
-        user,
-
+      const updated = await userModel.updateOne(
+        { _id: user },
         {
-          $set: { 'elderly.$[elem]': updateElderObject },
+          $set: {
+            'eldely.$[elem].name': newElderName,
+            'eldely.$[elem].birthDate': parsedDate,
+            'eldely.$[elem].deviceId': newElderDeviceId,
+          },
         },
-        { new: true, arrayFilters: [{ 'elem._id': elderId }] },
+        {
+          arrayFilters: [{ 'elem._id': elderId }],
+        },
       );
 
-      return _res.status(200).json(updatedElder);
+      return _res.status(200).json({ message: 'Idoso atualizado com sucesso' });
     } catch (error) {
+      console.log(error);
       return _res.status(501).json({ error: 'Erro ao atualizar idoso' });
     }
   }
