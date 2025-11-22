@@ -51,13 +51,13 @@ class DeviceService {
     }
   }
 
-  public async getLastMetric(): Promise<Metric> {
+  public async getLastMetric(): Promise<LastFallAlertResponse> {
     try {
       const { data } = await api.get<LastFallAlertResponse>(
         "/device/lastFallAlert"
       );
 
-      return data.metric as Metric;
+      return data;
     } catch (error: any) {
       throw new AppError(
         error?.response?.data?.message || "Erro ao buscar última métrica."

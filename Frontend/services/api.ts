@@ -1,7 +1,7 @@
 import { AppError } from "@/utils/AppError";
 import axios from "axios";
 
-const baseURL = "http://192.168.0.4:3030/";
+const baseURL = process.env.EXPO_PUBLIC_SERVER_URL;
 
 export const api = axios.create({
   baseURL: baseURL,

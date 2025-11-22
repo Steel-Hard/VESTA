@@ -32,9 +32,10 @@ export default function MonitoringScreen() {
     try {
       const lastMetric = await DeviceService.getLastMetric();
 
-      if (lastMetric) {
-        setIsSafe(lastMetric.isResolved);
-        setLastUpdate(formatTimeAgo(new Date(lastMetric.date).toString()));
+
+      if (lastMetric && lastMetric.macAddress === macAddress) {
+        setIsSafe(lastMetric.metric.isResolved);
+        setLastUpdate(formatTimeAgo(new Date(lastMetric.metric.date).toString()));
         setDeviceConnected(true);
       } else {
         setDeviceConnected(false);
@@ -62,7 +63,6 @@ export default function MonitoringScreen() {
     return () => clearInterval(interval);
   }, [macAddress]);
 
-  const elderAge = calculateAge(birthDate);
 
   return (
     <ScrollView style={styles.container}>
