@@ -101,6 +101,7 @@ export default function Listas() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
+            gap: 10,
           },
         ]}
         onPress={() => router.push("/elder/register")}

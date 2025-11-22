@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F7FAFC" },
   header: {
@@ -158,9 +157,17 @@ const styles = StyleSheet.create({
     borderColor: "#4A5568",
     borderRadius: 12,
     paddingVertical: 16,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
   },
-  outlineButtonText: { color: "#4A5568", fontSize: 16, fontWeight: "bold" },
+  outlineButtonText: {
+    color: "#4A5568",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
 
 export default styles;

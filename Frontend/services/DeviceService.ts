@@ -1,7 +1,7 @@
 import { api } from "./api";
 
 export interface Metric {
-  _id: string; 
+  _id: string;
   x: number;
   y: number;
   z: number;
@@ -18,10 +18,11 @@ export interface DeviceMetricsResponse {
   metrics: Metric[];
 }
 
+ 
 export interface LastFallAlertResponse {
   hasAlert: boolean;
   message?: string;
-  metric?: Metric;
+  metric: Metric;
   macAddress?: string;
   elderName?: string;
   deviceId?: string;
@@ -44,20 +45,16 @@ class DeviceService {
     return data;
   }
 
-  public async getLastMetric(macAddress: string): Promise<Metric | null> {
+  public async getLastMetric(): Promise<Metric> {
     try {
-      const response = await this.getTodayMetricsByMacAddress(macAddress);
-      if (response.metrics && response.metrics.length > 0) {
-        // Ordenar por data (mais recente primeiro) e retornar a última
-        const sortedMetrics = response.metrics.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        return sortedMetrics[0];
-      }
-      return null;
+      const { data } = await api.get<LastFallAlertResponse>(
+        "/device/lastFallAlert"
+      );
+
+      return data.metric as Metric;
     } catch (error) {
       console.error("Erro ao buscar última métrica:", error);
-      return null;
+      return {} as Metric;
     }
   }
 
@@ -66,10 +63,12 @@ class DeviceService {
     alertId: string
   ): Promise<void> {
     try {
-      await api.post(`/device/resolveFallAlert/${deviceId}/${alertId}`);
+      const { data } = await api.put(
+        `/device/resolveFallAlert/${deviceId}/${alertId}`
+      );
+      console.log(data);
     } catch (error) {
       console.error("Erro ao marcar alerta como resolvido:", error);
-      return Promise.reject(error);
     }
   }
 }

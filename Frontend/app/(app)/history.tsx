@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable, ActivityIndicator, Linking, ScrollView, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "@/styles/history.styles";
 import DeviceService, { LastFallAlertResponse } from "@/services/DeviceService";
 
@@ -73,9 +73,9 @@ export default function FallAlert() {
 
     try {
       setIsResolving(true);
-      await DeviceService.markAlertAsResolved(alertData.deviceId, alertId);
+      await DeviceService.markAlertAsResolved(alertData.deviceId, alertData.metric?._id);
       Alert.alert("Sucesso", "Alerta marcado como resolvido.");
-      await fetchLastAlert(); // re-sincroniza e atualiza a tela
+      await fetchLastAlert(); 
     } catch (error) {
       console.error("Erro ao marcar alerta como resolvido:", error);
       Alert.alert("Erro", "Falha ao marcar alerta como resolvido.");
@@ -153,7 +153,7 @@ export default function FallAlert() {
           style={[styles.button, styles.buttonRed]}
           onPress={handleCall}
         >
-          <Text style={styles.buttonText}>Ligar para o Idoso</Text>
+          <Text style={styles.buttonText}>Ligar para Emergência</Text>
         </Pressable>
 
     
@@ -166,11 +166,11 @@ export default function FallAlert() {
         </Pressable>
 
         <Pressable
-          style={[styles.button, { backgroundColor: "#7E57C2", marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "center" }]}
+          style={[styles.button, { backgroundColor: "#7E57C2", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }]}
           onPress={fetchLastAlert}
         >
-          <Ionicons name="reload" size={20} color="#fff" />
           <Text style={styles.buttonText}> Atualizar</Text>
+          <MaterialCommunityIcons name="refresh" size={20} color="#fff" />
         </Pressable>
       </View>
     </ScrollView>

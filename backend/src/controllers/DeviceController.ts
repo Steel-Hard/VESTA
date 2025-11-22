@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import DeviceModel, { IMetric } from '../models/device';
 import userModel from '../models/user';
 import axios from 'axios';
-import mongoose from 'mongoose';
 
 class DeviceController {
   public async createDevice(req: Request, res: Response): Promise<Response> {
@@ -10,7 +9,7 @@ class DeviceController {
       const { macAddress, metric } = req.body;
 
       if (!macAddress) {
-        return res.status(400).json({ error: 'macAddress é obrigatório' });
+        return res.status(400).json({ message: 'macAddress é obrigatório' });
       }
 
       const device = await DeviceModel.create({
@@ -20,7 +19,7 @@ class DeviceController {
       return res.status(201).json(device);
     } catch (error) {
       console.error('Erro ao criar device:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -30,13 +29,13 @@ class DeviceController {
       const device = await DeviceModel.findById(id);
 
       if (!device) {
-        return res.status(404).json({ error: 'Device não encontrado' });
+        return res.status(404).json({ message: 'Device não encontrado' });
       }
 
       return res.status(200).json(device);
     } catch (error) {
       console.error('Erro ao buscar device:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -50,13 +49,13 @@ class DeviceController {
       });
 
       if (!updatedDevice) {
-        return res.status(404).json({ error: 'Device não encontrado' });
+        return res.status(404).json({ message: 'Device não encontrado' });
       }
 
       return res.status(200).json(updatedDevice);
     } catch (error) {
       console.error('Erro ao atualizar device:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -66,13 +65,13 @@ class DeviceController {
       const deletedDevice = await DeviceModel.findByIdAndDelete(id);
 
       if (!deletedDevice) {
-        return res.status(404).json({ error: 'Device não encontrado' });
+        return res.status(404).json({ message: 'Device não encontrado' });
       }
 
       return res.status(200).json({ message: 'Device removido com sucesso' });
     } catch (error) {
       console.error('Erro ao deletar device:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
   public async addNewMetric(req: Request, res: Response): Promise<Response> {
@@ -83,7 +82,7 @@ class DeviceController {
       if ([x, y, z, fall].some((v) => v === undefined)) {
         return res
           .status(400)
-          .json({ error: 'Campos x, y, z e fall são obrigatórios' });
+          .json({ message: 'Campos x, y, z e fall são obrigatórios' });
       }
 
       const newMetric: IMetric = {
@@ -104,7 +103,7 @@ class DeviceController {
       );
 
       if (!updatedDevice) {
-        return res.status(404).json({ error: 'Device não encontrado' });
+        return res.status(404).json({ message: 'Device não encontrado' });
       }
 
       // Se detectou queda, enviar notificação push para usuários vinculados
@@ -124,7 +123,7 @@ class DeviceController {
       return res.status(200).json(updatedDevice);
     } catch (error) {
       console.error('Erro ao adicionar métrica:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -194,13 +193,13 @@ class DeviceController {
       const { macAddress } = req.params;
 
       if (!macAddress) {
-        return res.status(400).json({ error: 'macAddress é obrigatório' });
+        return res.status(400).json({ message: 'macAddress é obrigatório' });
       }
 
       const device = await DeviceModel.findOne({ macAddress });
 
       if (!device) {
-        return res.status(404).json({ error: 'Dispositivo não encontrado' });
+        return res.status(404).json({ message: 'Dispositivo não encontrado' });
       }
 
       const today = new Date();
@@ -217,7 +216,7 @@ class DeviceController {
       });
     } catch (error) {
       console.error('Erro ao buscar métricas do dia:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -302,7 +301,7 @@ class DeviceController {
       });
     } catch (error) {
       console.error('Erro ao buscar último alerta:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
   public async markAlertAsResolved(

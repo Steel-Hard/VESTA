@@ -36,7 +36,9 @@ class ElderController {
 
       const parsedDate = new Date(elderBirthDate);
       if (isNaN(parsedDate.getTime())) {
-        return _res.status(400).json({ error: 'Data de nascimento inválida' });
+        return _res
+          .status(400)
+          .json({ message: 'Data de nascimento inválida' });
       }
 
       const elderObject = {
@@ -58,13 +60,13 @@ class ElderController {
         );
 
         if (!newElder) {
-          return _res.status(404).json({ error: 'Usuário não encontrado' });
+          return _res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
         return _res.status(201).json(newElder.eldely);
       } catch (error) {
         console.log(error);
-        return _res.status(501).json({ error: 'Erro ao registrar idoso' });
+        return _res.status(501).json({ message: 'Erro ao registrar idoso' });
       }
     } catch (error) {
       if (_req.file) {
@@ -75,7 +77,7 @@ class ElderController {
         }
       }
       console.log(error);
-      return _res.status(501).json({ error: 'Erro ao registrar idoso' });
+      return _res.status(501).json({ message: 'Erro ao registrar idoso' });
     }
   }
   async findOneElderByUser(_req: Request, _res: Response) {
@@ -89,7 +91,7 @@ class ElderController {
 
       return _res.status(200).json(elder);
     } catch {
-      return _res.status(401).json({ error: 'Erro ao buscar idoso' });
+      return _res.status(401).json({ message: 'Erro ao buscar idoso' });
     }
   }
   async findAllEldersByUser(_req: Request, _res: Response) {
@@ -108,7 +110,7 @@ class ElderController {
 
       return _res.status(200).json(userObject);
     } catch {
-      return _res.status(401).json({ error: 'Erro ao buscar idoso' });
+      return _res.status(401).json({ message: 'Erro ao buscar idoso' });
     }
   }
   async deleteElderById(_req: Request, _res: Response) {
@@ -126,7 +128,7 @@ class ElderController {
 
       return _res.status(200).json(deletedElder);
     } catch (error) {
-      return _res.status(401).json({ error: 'Erro ao buscar idoso' });
+      return _res.status(401).json({ message: 'Erro ao buscar idoso' });
     }
   }
   async updateElderById(_req: Request, _res: Response) {
@@ -137,7 +139,7 @@ class ElderController {
 
     const parsedDate = new Date(newElderBirthDate);
     if (isNaN(parsedDate.getTime())) {
-      return _res.status(400).json({ error: 'Data de nascimento inválida' });
+      return _res.status(400).json({ message: 'Data de nascimento inválida' });
     }
 
     const elderObject = {
@@ -164,7 +166,7 @@ class ElderController {
       return _res.status(200).json({ message: 'Idoso atualizado com sucesso' });
     } catch (error) {
       console.log(error);
-      return _res.status(501).json({ error: 'Erro ao atualizar idoso' });
+      return _res.status(501).json({ message: 'Erro ao atualizar idoso' });
     }
   }
 }

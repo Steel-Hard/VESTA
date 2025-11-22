@@ -48,7 +48,14 @@
         }
       ],
       "expo-web-browser",
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sounds/alert.wav"
+          ]
+        }
+      ],
       [
         "expo-build-properties",
         {

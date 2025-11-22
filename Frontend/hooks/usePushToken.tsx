@@ -23,7 +23,7 @@ export function usePushToken() {
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 250, 250, 250],
           enableVibrate: true,
-          sound: "default",
+          sound: "alert.mp3",
         });
       }
     }

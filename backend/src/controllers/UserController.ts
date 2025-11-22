@@ -26,7 +26,7 @@ class UserController {
       res.status(201).json({ data });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Erro ao criar usuário' });
+      res.status(500).json({ message: 'Erro ao criar usuário' });
     }
   }
   public async readUser(req: Request, res: Response): Promise<any> {
@@ -35,13 +35,13 @@ class UserController {
       const data = await userModel.findOne({ email: email });
 
       if (!data || !data.password) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        return res.status(404).json({ message: 'Usuário não encontrado' });
       }
 
       const isPasswordValid = await bcrypt.compare(password, data.password);
 
       if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Senha incorreta' });
+        return res.status(401).json({ message: 'Senha incorreta' });
       }
 
       const token = jwt.sign(data.id, jwtSecret, {});
@@ -60,7 +60,7 @@ class UserController {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Erro ao buscar usuário' });
+      res.status(500).json({ message: 'Erro ao buscar usuário' });
     }
   }
   public async AuthWithGoogle(req: Request, res: Response): Promise<any> {
@@ -76,7 +76,7 @@ class UserController {
       const payload = tiket.getPayload();
 
       if (!payload) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(401).json({ message: 'Token inválido' });
       }
 
       let user = await userModel.findOne({ googleId: payload.sub });
@@ -115,7 +115,7 @@ class UserController {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Erro ao autenticar com Google' });
+      res.status(500).json({ message: 'Erro ao autenticar com Google' });
     }
   }
 
@@ -129,7 +129,7 @@ class UserController {
       const user = await userModel.findOne({ email: email });
 
       if (!user) {
-        res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ message: 'Usuário não encontrado' });
         return;
       }
 
@@ -138,7 +138,7 @@ class UserController {
         : false;
 
       if (!isPasswordValid) {
-        res.status(400).json({ error: 'Senha atual incorreta' });
+        res.status(400).json({ message: 'Senha atual incorreta' });
         return;
       }
 
@@ -150,7 +150,7 @@ class UserController {
       res.status(200).json({ message: 'Senha atualizada com sucesso' });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Erro ao atualizar senha' });
+      res.status(500).json({ message: 'Erro ao atualizar senha' });
     }
   }
 
@@ -163,7 +163,7 @@ class UserController {
       const { user } = res.locals;
 
       if (!req.file) {
-        res.status(400).json({ error: 'No file uploaded' });
+        res.status(400).json({ message: 'Sem nenhum upload de arquivo' });
         return;
       }
 
@@ -218,7 +218,7 @@ class UserController {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Erro ao atualizar avatar' });
+      res.status(500).json({ message: 'Erro ao atualizar avatar' });
     }
   }
 
@@ -228,7 +228,7 @@ class UserController {
       const { pushToken } = req.body;
 
       if (!pushToken) {
-        return res.status(400).json({ error: 'pushToken é obrigatório' });
+        return res.status(400).json({ message: 'pushToken é obrigatório' });
       }
 
       await userModel.findByIdAndUpdate(user, {
@@ -240,7 +240,7 @@ class UserController {
         .json({ message: 'Push token atualizado com sucesso' });
     } catch (error) {
       console.error('Erro ao atualizar push token:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 }
