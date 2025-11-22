@@ -13,13 +13,13 @@ routes.get(
   authenticateToken,
   deviceController.getLastFallAlertByUser,
 );
-routes.get('/:id', deviceController.findDeviceById);
-routes.put('/:id', deviceController.updateDevice);
-routes.delete('/:id', deviceController.deleteDevice);
 routes.put(
   '/resolveFallAlert/:deviceId/:alertId',
   authenticateToken,
   deviceController.markAlertAsResolved,
 );
+routes.get('/find/:id', deviceController.findDeviceById);
+routes.put('/:id', deviceController.updateDevice);
+routes.delete('/:id', deviceController.deleteDevice);
 
 export default routes;

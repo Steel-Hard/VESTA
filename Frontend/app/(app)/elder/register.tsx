@@ -35,7 +35,7 @@ export default function TelaCadastroIdoso() {
   const {
     control,
     handleSubmit,
-    formState: { errors }, 
+    formState: { errors },
   } = useForm<ElderFormData>({
     defaultValues: {
       name: "",
@@ -114,12 +114,11 @@ export default function TelaCadastroIdoso() {
     handleSubmit(handleAlertOrSubmit, onError)();
   };
 
-
   const handleAlertOrSubmit = (data: ElderFormData) => {
     if (!selectedImage) {
       Alert.alert(
         "Confirmação",
-       "Você não adicionou uma foto. A foto só pode ser adicionada/alterada no cadastro. Deseja continuar sem foto?",
+        "Você não adicionou uma foto. A foto só pode ser adicionada/alterada no cadastro. Deseja continuar sem foto?",
         [
           {
             text: "Não",
@@ -148,7 +147,6 @@ export default function TelaCadastroIdoso() {
           <Ionicons name="images-outline" size={50} color="#9E9E9E" />
         )}
       </Pressable>
-     
 
       <Controller
         control={control}
@@ -190,7 +188,7 @@ export default function TelaCadastroIdoso() {
 
       <Pressable
         style={[styles.button, isLoading && styles.buttonDisabled]}
-        onPress={handleConfirmCadastro} 
+        onPress={handleConfirmCadastro}
         disabled={isLoading}
       >
         {isLoading ? (

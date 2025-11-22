@@ -52,7 +52,7 @@
         "expo-notifications",
         {
           "sounds": [
-            "./assets/sounds/alert.wav"
+            "./assets/alert.wav"
           ]
         }
       ],

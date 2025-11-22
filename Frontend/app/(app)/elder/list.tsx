@@ -60,8 +60,6 @@ export default function Listas() {
     fetchElders();
   }, [dispatch]);
 
-
-
   const EmptyList = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyText}>Nenhum idoso cadastrado</Text>

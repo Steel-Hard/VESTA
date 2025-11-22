@@ -60,8 +60,6 @@ export default function SignUp() {
 
       await signIn(email, password);
     } catch (error) {
-      console.log(error);
-
       const isAppError = error instanceof AppError;
 
       const title = isAppError

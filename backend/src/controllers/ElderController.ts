@@ -65,7 +65,6 @@ class ElderController {
 
         return _res.status(201).json(newElder.eldely);
       } catch (error) {
-        console.log(error);
         return _res.status(501).json({ message: 'Erro ao registrar idoso' });
       }
     } catch (error) {
@@ -76,7 +75,7 @@ class ElderController {
           console.error('Error deleting temporary file:', e);
         }
       }
-      console.log(error);
+
       return _res.status(501).json({ message: 'Erro ao registrar idoso' });
     }
   }
@@ -96,8 +95,6 @@ class ElderController {
   }
   async findAllEldersByUser(_req: Request, _res: Response) {
     const { user } = _res.locals;
-
-    console.log(`userId: ${user}`);
 
     try {
       const userObject = await userModel.findById(
@@ -165,7 +162,6 @@ class ElderController {
 
       return _res.status(200).json({ message: 'Idoso atualizado com sucesso' });
     } catch (error) {
-      console.log(error);
       return _res.status(501).json({ message: 'Erro ao atualizar idoso' });
     }
   }

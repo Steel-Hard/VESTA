@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import DeviceModel, { IMetric } from '../models/device';
 import userModel from '../models/user';
 import axios from 'axios';
+import IUser from '../types/interfaces/IUser';
 
 class DeviceController {
   public async createDevice(req: Request, res: Response): Promise<Response> {
@@ -133,28 +134,25 @@ class DeviceController {
   ): Promise<void> {
     try {
       // Buscar todos os usuários que têm idosos com este deviceId (macAddress)
-      const users = await userModel.find({
+      const users: IUser[] = await userModel.find({
         'eldely.deviceId': macAddress,
       });
-
-      // Buscar o idoso específico para obter o nome
-      let elderName = 'Idoso';
-      for (const user of users) {
-        const elder = user.eldely.find((e) => e.deviceId === macAddress);
-        if (elder) {
-          elderName = elder.name;
-          break;
-        }
-      }
 
       // Enviar notificação para cada usuário que tem pushToken
       const notifications = [];
 
       for (const user of users) {
+        const elder = user.eldely.find((e) => e.deviceId === macAddress);
+
+        // caso raro: não achou
+        if (!elder) continue;
+
+        const elderName = elder.name || 'Idoso';
+
         if (user.pushToken) {
           notifications.push({
             to: user.pushToken,
-            sound: 'default',
+            sound: 'alert.wav',
             title: '🚨 Alerta de Queda Detectada!',
             body: `Queda detectada para ${elderName} às ${new Date(metric.date).toLocaleTimeString('pt-BR')}`,
             data: {
@@ -162,6 +160,7 @@ class DeviceController {
               metric,
               elderName,
             },
+            channelId: 'alert',
           });
         }
       }
@@ -313,8 +312,6 @@ class DeviceController {
     try {
       const userId = res.locals.user;
 
-      console.log('deviceId:', deviceId, 'alertId:', alertId);
-
       if (!deviceId || !alertId) {
         return res.status(400).json({
           message: 'deviceId e alertId são obrigatórios',
@@ -332,8 +329,6 @@ class DeviceController {
           },
         },
       );
-
-      console.log('Update result:', result);
 
       if (result.matchedCount === 0) {
         return res

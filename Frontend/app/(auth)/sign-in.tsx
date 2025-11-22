@@ -55,8 +55,6 @@ export default function SignIn() {
         forceCodeForRefreshToken: true,
       });
       console.log("Google Sign In configurado com sucesso");
-      console.log("Web Client ID:", webClientId.substring(0, 30) + "...");
-      console.log("iOS Client ID:", iosClientId.substring(0, 30) + "...");
     } else {
       console.warn("⚠️ GOOGLE_WEB_CLIENT_ID não encontrado no .env");
       console.warn(

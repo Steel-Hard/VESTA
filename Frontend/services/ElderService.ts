@@ -19,4 +19,3 @@ class ElderService {
 }
 
 export default new ElderService();
-

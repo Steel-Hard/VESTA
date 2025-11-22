@@ -39,11 +39,7 @@ export default function EditElderScreen() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-  } = useForm<ElderFormData>({
+  const { control, handleSubmit, reset } = useForm<ElderFormData>({
     defaultValues: {
       name: elderName || "",
       birthDate: elderBirthDate || "",

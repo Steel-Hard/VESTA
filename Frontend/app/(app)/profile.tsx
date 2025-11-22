@@ -103,7 +103,6 @@ export default function Profile() {
         );
       }
     } catch (error) {
-      console.log(error);
       const isAppError = error instanceof AppError;
 
       const title = isAppError
@@ -134,12 +133,10 @@ export default function Profile() {
         "Perfil Atualizado",
         "Seus dados de perfil foram atualizados com sucesso"
       );
-    } catch (error) {
+    } catch (error:any) {
       const isAppError = error instanceof AppError;
 
-      const title = isAppError
-        ? error.message
-        : "Não foi possível atualizar o perfil";
+      const title = "Não foi possível alterar senha. Tente novamente mais tarde";
 
       Alert.alert("Erro", title);
     } finally {

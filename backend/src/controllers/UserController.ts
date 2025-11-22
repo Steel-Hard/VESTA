@@ -25,7 +25,6 @@ class UserController {
       });
       res.status(201).json({ data });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: 'Erro ao criar usuário' });
     }
   }
@@ -59,7 +58,6 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: 'Erro ao buscar usuário' });
     }
   }
@@ -114,7 +112,6 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: 'Erro ao autenticar com Google' });
     }
   }
@@ -149,7 +146,6 @@ class UserController {
       );
       res.status(200).json({ message: 'Senha atualizada com sucesso' });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: 'Erro ao atualizar senha' });
     }
   }
@@ -217,7 +213,6 @@ class UserController {
         url: result.secure_url,
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: 'Erro ao atualizar avatar' });
     }
   }

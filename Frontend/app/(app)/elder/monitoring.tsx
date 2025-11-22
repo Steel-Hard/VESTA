@@ -7,6 +7,7 @@ import DeviceService from "@/services/DeviceService";
 import { calculateAge } from "@/utils/calculateAge";
 import { formatTimeAgo } from "@/utils/formatTimeAgo";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AppError } from "@/utils/AppError";
 
 export default function MonitoringScreen() {
   const params = useLocalSearchParams();
@@ -33,15 +34,18 @@ export default function MonitoringScreen() {
 
       if (lastMetric) {
         setIsSafe(lastMetric.isResolved);
-        console.log("Última métrica:", lastMetric);
         setLastUpdate(formatTimeAgo(new Date(lastMetric.date).toString()));
         setDeviceConnected(true);
       } else {
         setDeviceConnected(false);
         setLastUpdate("Nenhum dado disponível");
       }
-    } catch (error) {
-      console.error("Erro ao buscar métrica:", error);
+    } catch (error: any) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Erro ao buscar última métrica. Tente novamente mais tarde";
+      Alert.alert("Erro", title);
       setDeviceConnected(false);
       setLastUpdate("Erro ao carregar dados");
     } finally {

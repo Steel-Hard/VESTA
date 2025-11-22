@@ -1,3 +1,4 @@
+import { AppError } from "@/utils/AppError";
 import { api } from "./api";
 
 export interface Metric {
@@ -18,7 +19,6 @@ export interface DeviceMetricsResponse {
   metrics: Metric[];
 }
 
- 
 export interface LastFallAlertResponse {
   hasAlert: boolean;
   message?: string;
@@ -39,10 +39,16 @@ class DeviceService {
   }
 
   public async getLastFallAlert(): Promise<LastFallAlertResponse> {
-    const { data } = await api.get<LastFallAlertResponse>(
-      `/device/lastFallAlert`
-    );
-    return data;
+    try {
+      const { data } = await api.get<LastFallAlertResponse>(
+        `/device/lastFallAlert`
+      );
+      return data;
+    } catch (error: any) {
+      throw new AppError(
+        error?.response?.data?.message || "Erro ao buscar última métrica."
+      );
+    }
   }
 
   public async getLastMetric(): Promise<Metric> {
@@ -52,9 +58,10 @@ class DeviceService {
       );
 
       return data.metric as Metric;
-    } catch (error) {
-      console.error("Erro ao buscar última métrica:", error);
-      return {} as Metric;
+    } catch (error: any) {
+      throw new AppError(
+        error?.response?.data?.message || "Erro ao buscar última métrica."
+      );
     }
   }
 
@@ -66,9 +73,10 @@ class DeviceService {
       const { data } = await api.put(
         `/device/resolveFallAlert/${deviceId}/${alertId}`
       );
-      console.log(data);
-    } catch (error) {
-      console.error("Erro ao marcar alerta como resolvido:", error);
+    } catch (error: any) {
+      throw new AppError(
+        error?.response?.data?.message || "Erro ao marcar com resolvido."
+      );
     }
   }
 }
