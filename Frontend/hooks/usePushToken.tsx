@@ -18,20 +18,22 @@ export function usePushToken() {
       setToken(expoToken);
 
       if (Platform.OS === "android") {
-        await Notifications.setNotificationChannelAsync("default", {
-          name: "default",
+          await Notifications.setNotificationChannelAsync("alert", {
+          name: "alert",
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 250, 250, 250],
           enableVibrate: true,
-          sound: "default",
+          sound: "alert.wav", 
+          enableLights: true,
+          lightColor: "#FF0000", 
+          lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC
+          
         });
       }
     }
 
     register();
   }, []);
-
-  console.log("Push Token:", token);
 
   return token;
 }

@@ -159,11 +159,11 @@ export const styles = StyleSheet.create({
     marginTop: 24,
   },
   signOutButton: {
-    backgroundColor: "#ff4444",
+    backgroundColor: "#E53E3E",
     padding: 15,
     borderRadius: 10,
     marginHorizontal: 24,
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 24,
   },
   signOutText: {

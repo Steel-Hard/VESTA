@@ -9,7 +9,7 @@ type ElderCardProps = {
 };
 
 export function ElderCard({ name, imageUrl, onPress }: ElderCardProps) {
-  const AVATAR_SIZE = 60; 
+  const AVATAR_SIZE = 60;
   return (
     <Pressable style={styles.elderCard} onPress={onPress}>
       <View style={{ marginRight: 12 }}>
@@ -34,7 +34,7 @@ export function ElderCard({ name, imageUrl, onPress }: ElderCardProps) {
               height: AVATAR_SIZE,
             }}
           >
-            <Ionicons name="person" size={AVATAR_SIZE- 20} color="#7E57C2" />
+            <Ionicons name="person" size={AVATAR_SIZE - 20} color="#7E57C2" />
           </View>
         )}
       </View>

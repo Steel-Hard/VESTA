@@ -12,6 +12,7 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
+    priority: Notifications.AndroidNotificationPriority.HIGH,
   }),
 });
 

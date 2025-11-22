@@ -5,6 +5,7 @@ export interface UserDTO {
   email: string;
   avatar: string;
   phone: string;
+  authProvider: 'local' | 'google' ;
   createdAt: Date;
   updatedAt: Date;
 }

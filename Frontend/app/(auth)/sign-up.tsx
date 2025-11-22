@@ -44,9 +44,11 @@ export default function SignUp() {
   });
 
   const handlerError = (error: any) => {
-    Object.values(error).forEach((field: any) => {
-      ToastAndroid.show(field.message, ToastAndroid.SHORT);
-    });
+    if (Platform.OS === "android") {
+      Object.values(error).forEach((field: any) => {
+        ToastAndroid.show(field.message, ToastAndroid.SHORT);
+      });
+    }
   };
 
   const handlerSignUp = async ({ name, email, password }: FormData) => {
@@ -58,8 +60,6 @@ export default function SignUp() {
 
       await signIn(email, password);
     } catch (error) {
-      console.log(error);
-
       const isAppError = error instanceof AppError;
 
       const title = isAppError
@@ -75,7 +75,7 @@ export default function SignUp() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, backgroundColor: "white"  }}
+      style={{ flex: 1, backgroundColor: "white" }}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
       <ScrollView

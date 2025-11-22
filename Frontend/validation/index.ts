@@ -5,7 +5,7 @@ const validadeSchemaSignIn = yup.object({
   password: yup
     .string()
     .required("Informe a senha")
-    .min(6, "A senha deve ter té 6 digitos"),
+    .min(6, "A senha deve ter até 6 digitos"),
 });
 
 const validateSchemaSignUp = yup.object({
@@ -14,7 +14,7 @@ const validateSchemaSignUp = yup.object({
   password: yup
     .string()
     .required("Informe a senha")
-    .min(6, "A senha deve ter té 6 digitos"),
+    .min(6, "A senha deve ter até 6 digitos"),
   password_confirm: yup
     .string()
     .required("Informe a confirmação de senha")

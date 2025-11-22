@@ -8,12 +8,17 @@ import {
   Keyboard,
   Image,
   ActivityIndicator,
+  ToastAndroid,
+  Platform,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { styles } from "@/styles";
 import Input from "@/components/Input";
 import { Ionicons } from "@expo/vector-icons";
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { validadeSchemaSignIn } from "@/validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -26,17 +31,21 @@ type FormData = {
   password: string;
 };
 
-
 export default function SignIn() {
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = React.useState(false);
 
-
   React.useEffect(() => {
-    const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || process.env.EXPO_PUBLIC_CLIENT_ID || "";
-    const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_CLIENT_ID || "";
+    const webClientId =
+      process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ||
+      process.env.EXPO_PUBLIC_CLIENT_ID ||
+      "";
+    const iosClientId =
+      process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ||
+      process.env.EXPO_PUBLIC_CLIENT_ID ||
+      "";
 
     if (webClientId && iosClientId) {
       GoogleSignin.configure({
@@ -46,40 +55,45 @@ export default function SignIn() {
         forceCodeForRefreshToken: true,
       });
       console.log("Google Sign In configurado com sucesso");
-      console.log("Web Client ID:", webClientId.substring(0, 30) + "...");
-      console.log("iOS Client ID:", iosClientId.substring(0, 30) + "...");
     } else {
       console.warn("⚠️ GOOGLE_WEB_CLIENT_ID não encontrado no .env");
-      console.warn("Verifique se EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID está definido no arquivo .env");
+      console.warn(
+        "Verifique se EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID está definido no arquivo .env"
+      );
     }
   }, []);
 
   const handleGooglePress = async () => {
     setIsLoadingGoogle(true);
     Keyboard.dismiss();
-    
+
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
       const userInfo = await GoogleSignin.signIn();
-      
+
       // A biblioteca retorna idToken e serverAuthCode
       const idToken = userInfo.data?.idToken;
       const serverAuthCode = userInfo.data?.serverAuthCode;
-      
+
       const tokenToSend = idToken || serverAuthCode;
-      
+
       if (!tokenToSend) {
         throw new Error("Token não encontrado na resposta do Google");
       }
 
       await signInWithGoogle(tokenToSend);
-      
+
       router.replace("/(app)/elder/list");
     } catch (error: any) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED || error.code === statusCodes.IN_PROGRESS) {
+      if (
+        error.code === statusCodes.SIGN_IN_CANCELLED ||
+        error.code === statusCodes.IN_PROGRESS
+      ) {
         return;
       }
-      
+
       const isAppError = error instanceof AppError;
       const title = isAppError
         ? error.message
@@ -96,7 +110,13 @@ export default function SignIn() {
     },
     resolver: yupResolver(validadeSchemaSignIn),
   });
-  const handlerError = (error: any) => console.log("Form Errors:", error);
+  const handlerError = (error: any) => {
+    if (Platform.OS === "android") {
+      Object.values(error).forEach((field: any) => {
+        ToastAndroid.show(field.message, ToastAndroid.SHORT);
+      });
+    }
+  };
 
   const handleSignIn = async ({ email, password }: FormData) => {
     setIsLoading(true);
@@ -174,7 +194,7 @@ export default function SignIn() {
         disabled={isLoading || isLoadingGoogle}
       >
         {isLoadingGoogle ? (
-          <ActivityIndicator color="#000" />
+          <ActivityIndicator color="#fff" />
         ) : (
           <>
             <Ionicons name="logo-google" size={20} />

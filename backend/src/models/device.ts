@@ -6,6 +6,9 @@ export interface IMetric {
   z: number;
   fall: boolean;
   date: string;
+  isResolved: boolean;
+  resolvedAt: string;
+  resolvedBy: string;
 }
 
 export interface IDevice extends Document {
@@ -13,17 +16,23 @@ export interface IDevice extends Document {
   metric: IMetric[];
 }
 
+const metricSchema = new Schema(
+  {
+    x: Number,
+    y: Number,
+    z: Number,
+    fall: Boolean,
+    date: String,
+    isResolved: { type: Boolean, default: false },
+    resolvedAt: String,
+    resolvedBy: String,
+  },
+  { _id: true },
+);
+
 const deviceSchema = new Schema<IDevice>({
   macAddress: { type: String, required: true },
-  metric: [
-    {
-      x: { type: Number, required: true },
-      y: { type: Number, required: true },
-      z: { type: Number, required: true },
-      fall: { type: Boolean, required: true },
-      date: { type: String, required: true },
-    },
-  ],
+  metric: [metricSchema],
 });
 
 const DeviceModel = mongoose.model<IDevice>('Device', deviceSchema);

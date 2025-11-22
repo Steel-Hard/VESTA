@@ -5,13 +5,14 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
-  Image as RNImage,
   ScrollView,
+  Platform,
+  ToastAndroid,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { styles } from "@/styles";
 import Input from "@/components/Input";
+import DateInput from "@/components/DateInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -19,30 +20,26 @@ import {
   elderValidationSchema,
 } from "@/validation/elderValidation";
 import ElderService from "@/services/ElderService";
-import * as ImagePicker from "expo-image-picker";
 import { useDispatch } from "react-redux";
-import {removeElder  } from "@/store/slices/elderSlice";
+import { removeElder, updateElder } from "@/store/slices/elderSlice";
+
 export default function EditElderScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const dispatch = useDispatch();
-  
-  // Validar e extrair parâmetros com segurança
+
   const elderId = Array.isArray(params._id) ? params._id[0] : params._id;
   const elderName = Array.isArray(params.name) ? params.name[0] : params.name;
-  const elderBirthDate = Array.isArray(params.birthDate) ? params.birthDate[0] : params.birthDate;
-  const elderDeviceId = Array.isArray(params.deviceId) ? params.deviceId[0] : params.deviceId;
-  const elderImageUrl = Array.isArray(params.imageUrl) ? params.imageUrl[0] : params.imageUrl;
+  const elderBirthDate = Array.isArray(params.birthDate)
+    ? params.birthDate[0]
+    : params.birthDate;
+  const elderDeviceId = Array.isArray(params.deviceId)
+    ? params.deviceId[0]
+    : params.deviceId;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<any>(null);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ElderFormData>({
+  const { control, handleSubmit, reset } = useForm<ElderFormData>({
     defaultValues: {
       name: elderName || "",
       birthDate: elderBirthDate || "",
@@ -52,39 +49,21 @@ export default function EditElderScreen() {
   });
 
   useEffect(() => {
+    if (!elderId) {
+      Alert.alert("Erro", "ID do idoso não encontrado");
+      router.back();
+      return;
+    }
+
     reset({
       name: elderName || "",
       birthDate: elderBirthDate || "",
       macAddress: elderDeviceId || "",
     });
-  }, [elderName, elderBirthDate, elderDeviceId, reset]);
-
-  // Validar se elderId existe
-  useEffect(() => {
-    if (!elderId) {
-      Alert.alert("Erro", "ID do idoso não encontrado");
-      router.back();
-    }
-  }, [elderId]);
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0]);
-    }
-  };
+  }, [elderId, elderName, elderBirthDate, elderDeviceId, reset]);
 
   const handleUpdate = async (elderData: ElderFormData) => {
-    if (!elderId) {
-      Alert.alert("Erro", "ID do idoso é inválido");
-      return;
-    }
+    if (!elderId) return;
 
     try {
       setIsLoading(true);
@@ -95,10 +74,19 @@ export default function EditElderScreen() {
         newElderDeviceId: elderData.macAddress,
       });
 
+      dispatch(
+        updateElder({
+          _id: elderId,
+          name: elderData.name,
+          birthDate: elderData.birthDate,
+          deviceId: elderData.macAddress,
+        })
+      );
+
       Alert.alert("Sucesso", "Idoso atualizado com sucesso!");
-      router.back();
+      router.push("/elder/list");
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro ao atualizar:", error);
       Alert.alert("Erro", "Não foi possível atualizar o idoso");
     } finally {
       setIsLoading(false);
@@ -110,23 +98,21 @@ export default function EditElderScreen() {
       "Confirmar Exclusão",
       `Tem certeza que deseja excluir ${elderName}?`,
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
           style: "destructive",
           onPress: async () => {
             try {
               setIsLoading(true);
-              await ElderService.deleteElder(elderId!);
-
-              Alert.alert("Sucesso", "Idoso excluído com sucesso!");
-              dispatch(removeElder({ _id: elderId } ));
-              router.navigate("/elder/list");
+              if (elderId) {
+                await ElderService.deleteElder(elderId);
+                dispatch(removeElder({ _id: elderId }));
+                Alert.alert("Sucesso", "Idoso excluído com sucesso!");
+                router.navigate("/elder/list");
+              }
             } catch (error) {
-              console.error("Erro:", error);
+              console.error("Erro ao excluir:", error);
               Alert.alert("Erro", "Não foi possível excluir o idoso");
             } finally {
               setIsLoading(false);
@@ -138,44 +124,45 @@ export default function EditElderScreen() {
   };
 
   const onError = (errors: any) => {
-    console.log("Form errors:", errors);
-    Alert.alert("Erro", "Por favor, preencha todos os campos corretamente");
+    if (Platform.OS === "android") {
+      Object.values(errors).forEach((field: any) => {
+        ToastAndroid.show(field.message, ToastAndroid.SHORT);
+      });
+    } else {
+      Alert.alert("Erro", "Verifique os campos e tente novamente");
+    }
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#F7FAFC" }} contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 32 }}>
-      <View>
-        <Pressable onPress={pickImage} style={styles.iconContainer}>
-          {selectedImage ? (
-            <RNImage
-              source={{ uri: selectedImage.uri }}
-              style={styles.selectedImageIcon}
-            />
-          ) : elderImageUrl ? (
-            <RNImage
-              source={{ uri: elderImageUrl }}
-              style={styles.selectedImageIcon}
-            />
-          ) : (
-            <Ionicons name="images-outline" size={50} color="#9E9E9E" />
-          )}
-        </Pressable>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "#F7FAFC" }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 32 }}
+    >
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "bold",
+            marginBottom: 20,
+            color: "#333",
+          }}
+        >
+          Editar Dados de {elderName}
+        </Text>
+        <Text style={{ fontSize: 16, color: "#666", marginBottom: 30 }}>
+          Preencha os campos abaixo para atualizar as informações.
+        </Text>
 
         <Controller
           control={control}
           name="name"
           render={({ field: { onChange, value } }) => (
-            <>
-              <Input
-                placeholder="Nome completo"
-                value={value}
-                onChangeText={onChange}
-                autoCapitalize="words"
-              />
-              {errors.name && (
-                <Text style={styles.errorText}>{errors.name.message}</Text>
-              )}
-            </>
+            <Input
+              placeholder="Nome completo"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="words"
+            />
           )}
         />
 
@@ -183,17 +170,11 @@ export default function EditElderScreen() {
           control={control}
           name="birthDate"
           render={({ field: { onChange, value } }) => (
-            <>
-              <Input
-                placeholder="Data de nascimento"
-                textContentType="birthdate"
-                value={value}
-                onChangeText={onChange}
-              />
-              {errors.birthDate && (
-                <Text style={styles.errorText}>{errors.birthDate.message}</Text>
-              )}
-            </>
+            <DateInput
+              placeholder="Data de nascimento"
+              value={value}
+              onChangeText={onChange}
+            />
           )}
         />
 
@@ -201,17 +182,12 @@ export default function EditElderScreen() {
           control={control}
           name="macAddress"
           render={({ field: { onChange, value } }) => (
-            <>
-              <Input
-                placeholder="Endereço MAC do dispositivo"
-                value={value}
-                onChangeText={onChange}
-                autoCapitalize="characters"
-              />
-              {errors.macAddress && (
-                <Text style={styles.errorText}>{errors.macAddress.message}</Text>
-              )}
-            </>
+            <Input
+              placeholder="Endereço MAC do dispositivo"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="characters"
+            />
           )}
         />
 
@@ -223,7 +199,7 @@ export default function EditElderScreen() {
           {isLoading ? (
             <ActivityIndicator color={"white"} />
           ) : (
-            <Text style={styles.buttonText}>Atualizar Idoso</Text>
+            <Text style={styles.buttonText}>Salvar Idoso</Text>
           )}
         </Pressable>
 
@@ -242,4 +218,3 @@ export default function EditElderScreen() {
     </ScrollView>
   );
 }
-
