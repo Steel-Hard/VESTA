@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { styles } from "@/styles";
@@ -138,76 +139,82 @@ export default function SignIn() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
-      <Image className="w-2/4 h-60" source={vestaLogo} />
-      <Text style={styles.title}>Seja bem vindo!</Text>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="E-mail"
-            value={value}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            onChangeText={onChange}
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="Senha"
-            autoCapitalize="none"
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            onSubmitEditing={handleSubmit(handleSignIn)}
-          />
-        )}
-      />
-      <Pressable
-        style={[styles.button, isLoading && { opacity: 0.6 }]}
-        onPress={handleSubmit(handleSignIn, handlerError)}
-        disabled={isLoading || isLoadingGoogle}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
       >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Entrar</Text>
-        )}
-      </Pressable>
+        <Image className="w-2/4 h-60" source={vestaLogo} />
+        <Text style={styles.title}>Seja bem vindo!</Text>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="E-mail"
+              value={value}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              onChangeText={onChange}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Senha"
+              autoCapitalize="none"
+              secureTextEntry
+              value={value}
+              onChangeText={onChange}
+              onSubmitEditing={handleSubmit(handleSignIn)}
+            />
+          )}
+        />
+        <Pressable
+          style={[styles.button, isLoading && { opacity: 0.6 }]}
+          onPress={handleSubmit(handleSignIn, handlerError)}
+          disabled={isLoading || isLoadingGoogle}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </Pressable>
 
-      <Pressable
-        style={[
-          styles.button,
-          { backgroundColor: "#f2f2f2" },
-          (isLoadingGoogle || isLoading) && { opacity: 0.6 },
-        ]}
-        className="items-center flex-row justify-center gap-4"
-        onPress={handleGooglePress}
-        disabled={isLoading || isLoadingGoogle}
-      >
-        {isLoadingGoogle ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <>
-            <Ionicons name="logo-google" size={20} />
-            <Text className="font-bold">Faça login com Google</Text>
-          </>
-        )}
-      </Pressable>
-      <View style={[styles.row, { marginTop: 30, marginBottom: 40 }]}>
-        <Text>Ainda não tem conta?</Text>
-        <Link href="/sign-up" style={styles.link}>
-          Cadastre-se
-        </Link>
-      </View>
-    </ScrollView>
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: "#f2f2f2" },
+            (isLoadingGoogle || isLoading) && { opacity: 0.6 },
+          ]}
+          className="items-center flex-row justify-center gap-4"
+          onPress={handleGooglePress}
+          disabled={isLoading || isLoadingGoogle}
+        >
+          {isLoadingGoogle ? (
+            <ActivityIndicator color="black" />
+          ) : (
+            <>
+              <Ionicons name="logo-google" size={20} />
+              <Text className="font-bold">Faça login com Google</Text>
+            </>
+          )}
+        </Pressable>
+        <View style={[styles.row, { marginTop: 30, marginBottom: 40 }]}>
+          <Text>Ainda não tem conta?</Text>
+          <Link href="/sign-up" style={styles.link}>
+            Cadastre-se
+          </Link>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
