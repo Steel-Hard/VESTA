@@ -154,7 +154,9 @@ class DeviceController {
             to: user.pushToken,
             sound: 'alert.wav',
             title: '🚨 Alerta de Queda Detectada!',
-            body: `Queda detectada para ${elderName} às ${new Date(metric.date).toLocaleTimeString('pt-BR')}`,
+            body: `Queda detectada para ${elderName} às ${new Date(metric.date).toLocaleTimeString('pt-BR', {
+              timeZone: 'America/Sao_Paulo'
+            })}`,
             data: {
               macAddress,
               metric,
