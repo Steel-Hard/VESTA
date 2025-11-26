@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Platform,
   ToastAndroid,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useState } from "react";
 import Input from "@/components/Input/index";
@@ -152,6 +153,11 @@ export default function Profile() {
   };
 
   return (
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1, backgroundColor: "white" }}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+  >
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.headerContainer}>
         <UserPhoto
@@ -267,5 +273,6 @@ export default function Profile() {
         <Text style={styles.signOutText}>Sair</Text>
       </Pressable>
     </ScrollView>
+        </KeyboardAvoidingView>
   );
 }

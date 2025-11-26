@@ -8,6 +8,7 @@ import {
   Image as RNImage,
   Platform,
   ToastAndroid,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -136,67 +137,73 @@ export default function TelaCadastroIdoso() {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={pickImage} style={styles.iconContainer}>
-        {selectedImage ? (
-          <RNImage
-            source={{ uri: selectedImage.uri }}
-            style={styles.selectedImageIcon}
-          />
-        ) : (
-          <Ionicons name="images-outline" size={50} color="#9E9E9E" />
-        )}
-      </Pressable>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <View style={styles.container}>
+        <Pressable onPress={pickImage} style={styles.iconContainer}>
+          {selectedImage ? (
+            <RNImage
+              source={{ uri: selectedImage.uri }}
+              style={styles.selectedImageIcon}
+            />
+          ) : (
+            <Ionicons name="images-outline" size={50} color="#9E9E9E" />
+          )}
+        </Pressable>
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="Nome completo"
-            value={value}
-            onChangeText={onChange}
-            autoCapitalize="words"
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Nome completo"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="words"
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="birthDate"
-        render={({ field: { onChange, value } }) => (
-          <DateInput
-            placeholder="Data de nascimento"
-            value={value}
-            onChangeText={onChange}
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="birthDate"
+          render={({ field: { onChange, value } }) => (
+            <DateInput
+              placeholder="Data de nascimento"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="macAddress"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="Endereço MAC do dispositivo"
-            value={value}
-            onChangeText={onChange}
-            autoCapitalize="characters"
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="macAddress"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Endereço MAC do dispositivo"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="characters"
+            />
+          )}
+        />
 
-      <Pressable
-        style={[styles.button, isLoading && styles.buttonDisabled]}
-        onPress={handleConfirmCadastro}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color={"white"} />
-        ) : (
-          <Text style={styles.buttonText}>Cadastrar Idoso</Text>
-        )}
-      </Pressable>
-    </View>
+        <Pressable
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleConfirmCadastro}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color={"white"} />
+          ) : (
+            <Text style={styles.buttonText}>Cadastrar Idoso</Text>
+          )}
+        </Pressable>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
