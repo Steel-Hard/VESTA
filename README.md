@@ -1,3 +1,4 @@
+# ![Banner App](assets/vesta_banner.png)
 # ![Imagem de Capa](assets/steelhard-logo-prototype.png)
 
 <div align="center">
@@ -41,14 +42,12 @@
 ![Expo Router](https://img.shields.io/badge/Expo%20Router-4630EB?style=for-the-badge&logo=react&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![MPU6050](https://img.shields.io/badge/MPU6050-FF6F00?style=for-the-badge&logo=sensor&logoColor=white)
 ![MQTT](https://img.shields.io/badge/MQTT-660066?style=for-the-badge&logo=eclipse-mosquitto&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=prisma&logoColor=white)
 ![RNComponents](https://img.shields.io/badge/RNComponents-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![React Native](https://img.shields.io/badge/React%20Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-![Zod](https://img.shields.io/badge/Zod-3068B7?style=for-the-badge&logo=typescript&logoColor=white)
+
 
 ## 📋 User Stories
 
@@ -62,41 +61,35 @@
 ## 📋 Product Backlog
 | Número | Recurso Funcional           | Síntese do Requisito                                         | Status          |
 |:------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
-|  RF01  | Detecção de Queda           | Identificar automaticamente quedas                           | 🟡 Em Andamento |
-|  RF02  | Envio de Alertas SMS        | Disparar SMS para número previamente cadastrado              | 🔴 Não iniciado |
-|  RF03  | Monitoramento Mobile        | Enviar dados em tempo real para o aplicativo mobile          | 🔴 Não iniciado |
-|  RF04  | Histórico de Ocorrências    | Registrar e disponibilizar histórico de quedas               | 🔴 Não iniciado |
-|  RF05  | Configuração de Usuários    | Cadastro e gerenciamento de perfis de usuários               | 🟡 Em Andamento |
+|  RF01  | Detecção de Queda           | Identificar automaticamente quedas                           | 🟢 Concluído |
+|  RF02  | Envio de Alertas push        | Disparar Push Notification para usuário previamente cadastrado              | 🟢 Concluído |
+|  RF03  | Monitoramento Mobile        | Enviar dados em tempo real para o aplicativo mobile          | 🟢 Concluído |
+|  RF04  | Histórico de Ocorrências    | Registrar e disponibilizar histórico de quedas               | 🟢 Concluído |
+|  RF05  | Configuração de Usuários    | Cadastro e gerenciamento de perfis de usuários               | 🟢 Concluído |
 
 | Número  | Recurso Não-Funcional       | Síntese do Requisito                                         | Status          |
 |:-------:|-----------------------------|:------------------------------------------------------------:|:---------------:|
-|  RNF01  | Baixa Latência              | Garantir resposta rápida na detecção de quedas               | 🔴 Não iniciado |
-|  RNF02  | Interface Responsiva        | Aplicativo mobile com layout simples e acessível             | 🟡 Em Andamento |
-|  RNF03  | Alta Disponibilidade        | Sistema sempre disponível e tolerante a falhas               | 🔴 Não iniciado |
+|  RNF01  | Baixa Latência              | Garantir resposta rápida na detecção de quedas               | 🟢 Concluído |
+|  RNF02  | Interface Responsiva        | Aplicativo mobile com layout simples e acessível             | 🟢 Concluído |
+|  RNF03  | Alta Disponibilidade        | Sistema sempre disponível e tolerante a falhas               | 🟢 Concluído |
 
 
 ## ⚙️ Instalação
 
 ```bash
-# 1. Instalação do pnpm (caso não tenha)
-npm install -g pnpm
+# 1. Instalação das dependências do projeto
+npm i
 
-# 2. Instalação das dependências do projeto
-pnpm i
+# 2. Rodar o frontend 
+npm run start
 
-# 3. Criar usuário inicial no sistema
-pnpm run cria-user
-
-# 4. Rodar o ambiente de desenvolvimento
-pnpm run dev
+# 3. Rodar o backend
+npm run dev
 
 # O servidor estará disponível localmente
 ```
 
-### Links úteis para autenticação e gerenciamento de sessões
 
-- [Gerenciamento de Sessões - Better Auth](https://www.better-auth.com/docs/concepts/session-management#get-session)
-- [Documentação de Autenticação do Next.js](https://nextjs.org/docs/pages/building-your-application/authentication)
 
 ### Configurações de PowerShell (se necessário)
 
@@ -113,9 +106,9 @@ Para seguir boas práticas de commits no seu projeto, consulte o repositório:
 ## 🔄 Scrum
 | Sprint                                    | Início     | Fim        | Status           | 📉 Burndown Chart                                        |
 |:-----------------------------------------:|:----------:|:----------:|:----------------:|:---------------------------------------------------------:|
-| [Sprint 1](public/docs/sprintbacklog1.md) | 14/09/2025 | 08/10/2025 | 🟢 Concluído    | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_1.png) |
-| [Sprint 2](public/docs/sprintbacklog2.md) | 09/10/2025 | 13/11/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_2.png) |
-| [Sprint 3](public/docs/sprintbacklog3.md) | 14/11/2025 | 02/12/2025 | 🔴 Não iniciado | [Ver Gráfico](public/docs/Burndown/Burndown_Sprint_3.png) |
+| 1 | 14/09/2025 | 08/10/2025 | 🟢 Concluído    | [Ver Gráfico](assets/burndown_sp1.png) |
+| 2 | 09/10/2025 | 13/11/2025 | 🟢 Concluído  | [Ver Gráfico](assets/burndown_sp2.png) |
+| 3 | 14/11/2025 | 25/11/2025 | 🟢 Concluído | [Ver Gráfico](assets/burndown_sp3.png) |
 
 ## 👨‍💻 Dev Team
 
