@@ -13,10 +13,10 @@ import * as fsExtra from 'fs-extra';
 class UserController {
   //TODO: VERIFICAR OS TRATAMENDO DE ERROS
   public async createUser(req: Request, res: Response) {
-    const { name, email, password } = req.body;
-    const nPassword = await bcrypt.hash(password, 8);
-
     try {
+      const { name, email, password } = req.body;
+      const nPassword = await bcrypt.hash(password, 8);
+
       const data = await userModel.insertOne({
         name,
         email,
@@ -25,58 +25,47 @@ class UserController {
       });
       res.status(201).json({ data });
     } catch (error) {
-      if (error instanceof mongoose.Error.ValidationError) {
-        return res.status(400).json(error);
-      }
-
-      console.log(error);
-      throw new Error('Erro ao criar usuário');
+      res.status(500).json({ message: 'Erro ao criar usuário' });
     }
   }
   public async readUser(req: Request, res: Response): Promise<any> {
-    const { email, password } = req.body;
     try {
+      const { email, password } = req.body;
       const data = await userModel.findOne({ email: email });
 
-      if (!data || !data.password)
-        return res.status(404).send('Usuário não encontrado');
+      if (!data || !data.password) {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+      }
 
-      await bcrypt
-        .compare(password, data.password)
-        .then((status) => {
-          if (status == false)
-            return res.status(500).send('Erro senha incorreta');
+      const isPasswordValid = await bcrypt.compare(password, data.password);
 
-          const token = jwt.sign(data.id, jwtSecret, {});
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Senha incorreta' });
+      }
 
-          return res.status(200).json({
-            message: 'Sucesso no Login',
-            token: token,
-            user: {
-              id: data.id,
-              authProvider: data.authProvider,
-              name: data.name,
-              email: data.email,
-              elderly: data.eldely,
-              avatar: data.avatar,
-            },
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          return res.status(401).send('Invalid password');
-        });
+      const token = jwt.sign(data.id, jwtSecret, {});
+
+      return res.status(200).json({
+        message: 'Sucesso no Login',
+        token: token,
+        user: {
+          id: data.id,
+          authProvider: data.authProvider,
+          name: data.name,
+          email: data.email,
+          elderly: data.eldely,
+          avatar: data.avatar,
+        },
+      });
     } catch (error) {
-      console.log(error);
-      throw new Error('Erro ao buscar usuário');
+      res.status(500).json({ message: 'Erro ao buscar usuário' });
     }
   }
   public async AuthWithGoogle(req: Request, res: Response): Promise<any> {
-    const { idToken } = req.params;
-
-    const client = new OAuth2Client(config.CLIENT_ID);
-
     try {
+      const { idToken } = req.params;
+      const client = new OAuth2Client(config.CLIENT_ID);
+
       const tiket = await client.verifyIdToken({
         idToken,
         audience: config.CLIENT_ID,
@@ -84,9 +73,13 @@ class UserController {
 
       const payload = tiket.getPayload();
 
-      let user = await userModel.findOne({ googleId: payload?.sub });
+      if (!payload) {
+        return res.status(401).json({ message: 'Token inválido' });
+      }
 
-      if (!user && payload) {
+      let user = await userModel.findOne({ googleId: payload.sub });
+
+      if (!user) {
         user = await userModel.findOne({ email: payload.email });
 
         if (user) {
@@ -104,9 +97,22 @@ class UserController {
         }
       }
 
-      return res.status(200).json(payload);
+      const token = jwt.sign(user.id, jwtSecret, {});
+
+      return res.status(200).json({
+        message: 'Sucesso no Login',
+        token: token,
+        user: {
+          id: user.id,
+          authProvider: user.authProvider,
+          name: user.name,
+          email: user.email,
+          elderly: user.eldely,
+          avatar: user.avatar,
+        },
+      });
     } catch (error) {
-      res.status(401).json({ error: 'Token inválido' });
+      res.status(500).json({ message: 'Erro ao autenticar com Google' });
     }
   }
 
@@ -115,20 +121,24 @@ class UserController {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    const { email, currentPassword, newPassword } = req.body;
     try {
+      const { email, currentPassword, newPassword } = req.body;
       const user = await userModel.findOne({ email: email });
+
       if (!user) {
-        res.status(404).send('Usuário não encontrado');
+        res.status(404).json({ message: 'Usuário não encontrado' });
         return;
       }
+
       const isPasswordValid = user.password
         ? await bcrypt.compare(currentPassword, user.password)
         : false;
+
       if (!isPasswordValid) {
-        res.status(400).send('Senha atual incorreta');
+        res.status(400).json({ message: 'Senha atual incorreta' });
         return;
       }
+
       const hashedNewPassword = await bcrypt.hash(newPassword, 8);
       await userModel.updateOne(
         { email: email },
@@ -136,7 +146,7 @@ class UserController {
       );
       res.status(200).json({ message: 'Senha atualizada com sucesso' });
     } catch (error) {
-      next(error);
+      res.status(500).json({ message: 'Erro ao atualizar senha' });
     }
   }
 
@@ -145,14 +155,14 @@ class UserController {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    const { user } = res.locals;
-
-    if (!req.file) {
-      res.status(400).json({ error: 'No file uploaded' });
-      return;
-    }
-
     try {
+      const { user } = res.locals;
+
+      if (!req.file) {
+        res.status(400).json({ message: 'Sem nenhum upload de arquivo' });
+        return;
+      }
+
       const filePath = req.file.path;
       cloudinary.config({
         cloud_name: config.CLOUDNARY_NAME,
@@ -203,8 +213,29 @@ class UserController {
         url: result.secure_url,
       });
     } catch (error) {
-      console.error('Error updating avatar:', error);
-      res.status(500).json({ error: 'Erro ao atualizar avatar' });
+      res.status(500).json({ message: 'Erro ao atualizar avatar' });
+    }
+  }
+
+  public async updatePushToken(req: Request, res: Response): Promise<Response> {
+    try {
+      const { user } = res.locals;
+      const { pushToken } = req.body;
+
+      if (!pushToken) {
+        return res.status(400).json({ message: 'pushToken é obrigatório' });
+      }
+
+      await userModel.findByIdAndUpdate(user, {
+        $set: { pushToken },
+      });
+
+      return res
+        .status(200)
+        .json({ message: 'Push token atualizado com sucesso' });
+    } catch (error) {
+      console.error('Erro ao atualizar push token:', error);
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 }

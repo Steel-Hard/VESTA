@@ -1,38 +1,68 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Image,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, ScrollView, Alert, Image } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { useLocalSearchParams } from "expo-router";
-import styles from "@/styles/monitoring.styles"
+import { useLocalSearchParams, useRouter } from "expo-router";
+import styles from "@/styles/monitoring.styles";
+import DeviceService from "@/services/DeviceService";
+import { calculateAge } from "@/utils/calculateAge";
+import { formatTimeAgo } from "@/utils/formatTimeAgo";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AppError } from "@/utils/AppError";
 
 export default function MonitoringScreen() {
-  const { name, birthDate, deviceId, imageUrl } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const { name, birthDate, deviceId, imageUrl, _id } = params;
+  const router = useRouter();
 
   const imageUri = Array.isArray(imageUrl) ? imageUrl[0] : imageUrl;
+  const macAddress = Array.isArray(deviceId) ? deviceId[0] : deviceId;
 
-  console.log(`destino result:  ${name}`);
-  const [heartRate, setHeartRate] = useState(70);
   const [isSafe, setIsSafe] = useState(true);
   const [deviceConnected, setDeviceConnected] = useState(true);
-  const [batteryLevel, setBatteryLevel] = useState(85);
-  const [lastUpdate, setLastUpdate] = useState("Há 2 minutos");
+  const [lastUpdate, setLastUpdate] = useState("Carregando...");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  const checkHeartRateAlert = (rate: number) => {
-    if (rate > 100 || rate < 60) {
-      setIsSafe(false);
-      Alert.alert(
-        "Alerta de Frequência Cardíaca",
-        `Frequência cardíaca ${rate} BPM está fora do normal. Verifique o idoso.`,
-        [{ text: "OK", onPress: () => setIsSafe(true) }]
-      );
+  const fetchLastMetric = async () => {
+    if (!macAddress) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const lastMetric = await DeviceService.getLastMetric();
+
+
+      if (lastMetric && lastMetric.macAddress === macAddress) {
+        setIsSafe(lastMetric.metric.isResolved);
+        setLastUpdate(formatTimeAgo(new Date(lastMetric.metric.date).toString()));
+        setDeviceConnected(true);
+      } else {
+        setDeviceConnected(false);
+        setLastUpdate("Nenhum dado disponível");
+      }
+    } catch (error: any) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Erro ao buscar última métrica. Tente novamente mais tarde";
+      Alert.alert("Erro", title);
+      setDeviceConnected(false);
+      setLastUpdate("Erro ao carregar dados");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchLastMetric();
+
+    // Atualizar a cada 30 segundos
+    const interval = setInterval(fetchLastMetric, 30000);
+
+    return () => clearInterval(interval);
+  }, [macAddress]);
+
 
   return (
     <ScrollView style={styles.container}>
@@ -43,10 +73,7 @@ export default function MonitoringScreen() {
           <View style={styles.profileContent}>
             <View style={styles.photoContainer}>
               {imageUri ? (
-                <Image
-                  source={{ uri: imageUri }}
-                  style={styles.photoCircle}
-                />
+                <Image source={{ uri: imageUri }} style={styles.photoCircle} />
               ) : (
                 <View style={styles.photoCircle}>
                   <Icon name="user" size={48} color="#4A5568" />
@@ -64,9 +91,8 @@ export default function MonitoringScreen() {
 
             <View style={styles.profileInfo}>
               <Text style={styles.elderName}>{name}</Text>
-              <Text style={styles.elderAge}>{80} Anos</Text>
-              <Text style={styles.monitoringDate}>
-                Monitorado desde 15/01/2024
+              <Text style={styles.elderAge}>
+                {calculateAge(birthDate)} anos
               </Text>
             </View>
           </View>
@@ -74,90 +100,28 @@ export default function MonitoringScreen() {
 
         {/* Segurança */}
         <View style={styles.safetySection}>
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.safetyButton,
               { backgroundColor: isSafe ? "#48BB78" : "#F56565" },
             ]}
-            onPress={() => {
-              setIsSafe(!isSafe);
-              if (!isSafe) checkHeartRateAlert(heartRate);
-            }}
           >
             <View style={styles.safetyButtonContent}>
-              <Icon name="bell" size={24} color="white" />
+              <Icon
+                name={isSafe ? "check-circle" : "alert-circle"}
+                size={24}
+                color="white"
+              />
               <Text style={styles.safetyButtonTitle}>
-                {isSafe ? "Em Segurança" : "Alerta de Emergência!"}
+                {isSafe ? "Em Segurança" : "Queda Detectada!"}
               </Text>
             </View>
             <Text style={styles.safetyButtonSubtitle}>
               {isSafe
-                ? "Todos os sinais vitais estão normais"
-                : "Atenção necessária - Verifique o idoso"}
+                ? "Sem detecção de queda"
+                : "Queda foi detectada - Verificação necessária"}
             </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Saúde Cardíaca */}
-        <View style={styles.heartSection}>
-          <Text style={styles.sectionTitle}>💓 Saúde Cardíaca</Text>
-
-          <View style={styles.heartCard}>
-            <View style={styles.heartContent}>
-              <View style={styles.heartIconContainer}>
-                <View style={styles.heartIconCircle}>
-                  <Icon name="heart" size={32} color="#F56565" />
-                </View>
-              </View>
-
-              <View style={styles.heartInfo}>
-                <View style={styles.heartRateContainer}>
-                  <Text
-                    style={[
-                      styles.heartRateText,
-                      {
-                        color:
-                          heartRate > 100 || heartRate < 60
-                            ? "#E53E3E"
-                            : "#48BB78",
-                      },
-                    ]}
-                  >
-                    {heartRate}
-                  </Text>
-                  <Text style={styles.bpmText}>BPM</Text>
-                </View>
-                <Text style={styles.heartRateLabel}>Batimentos por Minuto</Text>
-                <Text style={styles.lastUpdate}>
-                  Última atualização: {lastUpdate}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.progressContainer}>
-              <View style={styles.progressLabels}>
-                <Text style={styles.progressLabel}>Normal</Text>
-                <Text style={styles.progressLabel}>Alto</Text>
-              </View>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      backgroundColor:
-                        heartRate > 100 || heartRate < 60
-                          ? "#F56565"
-                          : "#48BB78",
-                      width: `${Math.min(
-                        Math.max(((heartRate - 40) / 80) * 100, 0),
-                        100
-                      )}%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          </View>
+          </Pressable>
         </View>
 
         {/* Status do Dispositivo */}
@@ -181,27 +145,7 @@ export default function MonitoringScreen() {
                   { color: deviceConnected ? "#38A169" : "#E53E3E" },
                 ]}
               >
-                {deviceConnected ? "Conectado" : "Desconectado"}
-              </Text>
-            </View>
-
-            {/* Bateria */}
-            <View style={styles.deviceRow}>
-              <View style={styles.deviceInfo}>
-                <Icon
-                  name="battery"
-                  size={24}
-                  color={batteryLevel > 20 ? "#48BB78" : "#F56565"}
-                />
-                <Text style={styles.deviceLabel}>Bateria</Text>
-              </View>
-              <Text
-                style={[
-                  styles.deviceStatus,
-                  { color: batteryLevel > 20 ? "#38A169" : "#E53E3E" },
-                ]}
-              >
-                {batteryLevel}%
+                {deviceConnected ? "Sincronizado" : "Desincronizado"}
               </Text>
             </View>
 
@@ -214,24 +158,44 @@ export default function MonitoringScreen() {
           </View>
         </View>
 
-        {/* Botão de Teste */}
+        {/* Botão de Edição */}
         <View style={styles.testButtonContainer}>
-          <TouchableOpacity
+          <Pressable
             style={styles.outlineButton}
+            disabled={isNavigating}
             onPress={() => {
-              const newHeartRate = Math.floor(Math.random() * 60) + 40;
-              setHeartRate(newHeartRate);
-              setLastUpdate("Agora");
-              checkHeartRateAlert(newHeartRate);
+              if (isNavigating) return;
+
+              setIsNavigating(true);
+              const elderId = Array.isArray(_id) ? _id[0] : _id;
+              const elderNameStr = Array.isArray(name) ? name[0] : name;
+              const birthDateStr = Array.isArray(birthDate)
+                ? birthDate[0]
+                : birthDate;
+
+              try {
+                router.push({
+                  pathname: "/elder/edit",
+                  params: {
+                    _id: elderId || "",
+                    name: elderNameStr || "",
+                    birthDate: birthDateStr || "",
+                    deviceId: macAddress || "",
+                    imageUrl: imageUri || "",
+                  },
+                });
+              } catch (error) {
+                console.error("Erro ao navegar:", error);
+                Alert.alert("Erro", "Não foi possível abrir a tela de edição");
+                setIsNavigating(false);
+              }
             }}
           >
-            <Text style={styles.outlineButtonText}>
-              🔄 Simular Nova Leitura
-            </Text>
-          </TouchableOpacity>
+            <Text style={styles.outlineButtonText}>Editar Idoso </Text>
+            <MaterialCommunityIcons name="pencil" size={26} />
+          </Pressable>
         </View>
       </View>
     </ScrollView>
   );
 }
-

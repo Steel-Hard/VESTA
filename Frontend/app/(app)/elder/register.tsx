@@ -6,11 +6,15 @@ import {
   Alert,
   ActivityIndicator,
   Image as RNImage,
+  Platform,
+  ToastAndroid,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { styles } from "@/styles";
 import Input from "@/components/Input";
+import DateInput from "@/components/DateInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -96,78 +100,110 @@ export default function TelaCadastroIdoso() {
   };
 
   const onError = (errors: any) => {
-    console.log("Form errors:", errors);
+    if (Platform.OS === "android") {
+      Object.values(errors).forEach((field: any) => {
+        ToastAndroid.show(field.message, ToastAndroid.SHORT);
+      });
+    }
     Alert.alert("Erro", "Por favor, preencha todos os campos corretamente");
   };
 
-  return (
-    <View style={styles.container}>
-      <Pressable onPress={pickImage} style={styles.iconContainer}>
-        {selectedImage ? (
-          <RNImage
-            source={{ uri: selectedImage.uri }}
-            style={styles.selectedImageIcon}
-          />
-        ) : (
-          <Ionicons name="images-outline" size={50} color="#9E9E9E" />
-        )}
-      </Pressable>
+  /**
+   * Nova função para tratar o clique do botão de cadastro, incluindo o alerta.
+   */
+  const handleConfirmCadastro = () => {
+    handleSubmit(handleAlertOrSubmit, onError)();
+  };
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field: { onChange, value } }) => (
-          <>
+  const handleAlertOrSubmit = (data: ElderFormData) => {
+    if (!selectedImage) {
+      Alert.alert(
+        "Confirmação",
+        "Você não adicionou uma foto. A foto só pode ser adicionada/alterada no cadastro. Deseja continuar sem foto?",
+        [
+          {
+            text: "Não",
+            style: "cancel",
+          },
+          {
+            text: "Sim",
+            onPress: () => handleCadastro(data),
+          },
+        ]
+      );
+    } else {
+      handleCadastro(data);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <View style={styles.container}>
+        <Pressable onPress={pickImage} style={styles.iconContainer}>
+          {selectedImage ? (
+            <RNImage
+              source={{ uri: selectedImage.uri }}
+              style={styles.selectedImageIcon}
+            />
+          ) : (
+            <Ionicons name="images-outline" size={50} color="#9E9E9E" />
+          )}
+        </Pressable>
+
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, value } }) => (
             <Input
               placeholder="Nome completo"
               value={value}
               onChangeText={onChange}
               autoCapitalize="words"
             />
-            {errors.name && (
-              <Text style={styles.errorText}>{errors.name.message}</Text>
-            )}
-          </>
-        )}
-      />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="birthDate"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="Data de nascimento"
-            textContentType="birthdate"
-            value={value}
-            onChangeText={onChange}
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="birthDate"
+          render={({ field: { onChange, value } }) => (
+            <DateInput
+              placeholder="Data de nascimento"
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="macAddress"
-        render={({ field: { onChange, value } }) => (
-          <Input
-            placeholder="Endereço MAC do dispositivo"
-            value={value}
-            onChangeText={onChange}
-            autoCapitalize="characters"
-          />
-        )}
-      />
+        <Controller
+          control={control}
+          name="macAddress"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Endereço MAC do dispositivo"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="characters"
+            />
+          )}
+        />
 
-      <Pressable
-        style={[styles.button, isLoading && styles.buttonDisabled]}
-        onPress={handleSubmit(handleCadastro, onError)}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color={"white"} />
-        ) : (
-          <Text style={styles.buttonText}>Cadastrar Idoso</Text>
-        )}
-      </Pressable>
-    </View>
+        <Pressable
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleConfirmCadastro}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color={"white"} />
+          ) : (
+            <Text style={styles.buttonText}>Cadastrar Idoso</Text>
+          )}
+        </Pressable>
+      </View>
+    </KeyboardAvoidingView>
   );
 }

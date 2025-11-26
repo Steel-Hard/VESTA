@@ -10,5 +10,6 @@ declare namespace NodeJS {
     CLOUDNARY_NAME: string;
     CLOUDNARY_API_KEY: string;
     CLOUDNARY_API_SECRET: string;
+    MONGODB_URI: string;
   }
 }

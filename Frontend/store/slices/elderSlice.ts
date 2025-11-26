@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { api } from '@/services/api';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Elder {
   _id: string;
@@ -21,6 +20,10 @@ const initialState: ElderState = {
   elders: [],
 };
 
+interface RemoveElderPayload {
+  _id: string;
+}
+
 const elderSlice = createSlice({
   name: 'elder',
   initialState,
@@ -31,11 +34,19 @@ const elderSlice = createSlice({
     addElder(state, action: PayloadAction<Elder>) {
       state.elders.push(action.payload);
     },
+    updateElder(state, action: PayloadAction<Elder>) {
+      state.elders = state.elders.map(elder => 
+        elder._id === action.payload._id ? action.payload : elder
+      );
+    },
+    removeElder(state, action: PayloadAction<RemoveElderPayload>) {
+      state.elders = state.elders.filter(elder => elder._id !== action.payload._id);
+    },
     clearElders(state) {
       state.elders = [];
     },
   },
 });
 
-export const { setElders, addElder, clearElders } = elderSlice.actions;
+export const { setElders, addElder, clearElders,removeElder ,updateElder} = elderSlice.actions;
 export default elderSlice.reducer;

@@ -11,10 +11,12 @@ import {
 } from "@/storage/storageToken";
 import { IAuthData, UserDTO } from "@/@types";
 import { createContext, ReactNode, useEffect, useState } from "react";
+import { usePushToken } from "@/hooks/usePushToken";
 
 export type AuthContextDataProps = {
   user: UserDTO;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: (accessToken: string) => Promise<void>;
   signOut: () => Promise<void>;
   isLoading: boolean;
   updateUserProfile: (userUpdated: UserDTO) => Promise<void>;
@@ -30,7 +32,7 @@ type AuthContextProviderProps = {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO);
-
+  const token = usePushToken();
   const [isLoading, setIsLoading] = useState(false);
 
   const userAndTokenUpdate = async (userData: UserDTO, token: string) => {
@@ -39,10 +41,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setUser(userData);
   };
 
-  const storageUserAndToken = async (
-    userData: UserDTO,
-    token: string,
-  ) => {
+  const storageUserAndToken = async (userData: UserDTO, token: string) => {
     try {
       await setStorageUser(userData);
       await setStorageToken({ token });
@@ -54,14 +53,32 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   };
 
   const signIn = async (email: string, password: string) => {
-    console.log("chego no signin")
+    setIsLoading(true);
     try {
-        const { data } = await api.post<IAuthData>("/auth/signin", { email, password });
-        console.log("data: " + data.user.email)
-        console.log(user)
+      const { data } = await api.post<IAuthData>("/auth/signin", {
+        email,
+        password,
+      });
       if (data.user && data.token) {
         await storageUserAndToken(data.user, data.token);
         userAndTokenUpdate(data.user, data.token);
+        await sendPushToken();
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signInWithGoogle = async (idToken: string) => {
+    setIsLoading(true);
+    try {
+      const { data } = await api.post<IAuthData>(`/auth/google/${idToken}`);
+      if (data.user && data.token) {
+        await storageUserAndToken(data.user, data.token);
+        userAndTokenUpdate(data.user, data.token);
+        await sendPushToken();
       }
     } catch (error) {
       throw error;
@@ -107,13 +124,31 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   };
 
+  const sendPushToken = async () => {
+    if (token && user) {
+      try {
+        await api.put("/auth/pushToken", { pushToken: token });
+        console.log("Push token enviado ao backend");
+      } catch (err) {
+        console.error("Erro ao enviar pushToken ao backend:", err);
+      }
+    }
+  };
+
   useEffect(() => {
     loadingUserData();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, signIn, signOut, isLoading, updateUserProfile }}
+      value={{
+        user,
+        signIn,
+        signInWithGoogle,
+        signOut,
+        isLoading,
+        updateUserProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

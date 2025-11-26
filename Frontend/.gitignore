@@ -3,6 +3,11 @@
 # dependencies
 node_modules/
 
+# Firebase Admin SDK Key
+google-services.json
+notifications-vesta-firebase-adminsdk-fbsvc-df724eb2cf.json
+auth-473723-firebase-adminsdk-fbsvc-4b7c524e64.json
+
 # Expo
 .expo/
 dist/

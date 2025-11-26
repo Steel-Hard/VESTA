@@ -5,15 +5,16 @@ import {
   Pressable,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { styles } from "@/styles";
 import { ElderCard } from "@/components/ElderCard";
 import { api } from "@/services/api";
 import { setElders, ApiData } from "@/store/slices/elderSlice";
-import {  Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-
+import { AppError } from "@/utils/AppError";
 
 interface Elder {
   _id: string;
@@ -33,7 +34,6 @@ export default function Listas() {
   const router = useRouter();
 
   const monitoringRedirect = (elder: Elder) => {
-    console.log(elder);
     router.push({
       pathname: "/elder/monitoring",
       params: {
@@ -50,10 +50,14 @@ export default function Listas() {
     const fetchElders = async () => {
       try {
         const { data } = await api.get<ApiData>("/elder");
-        const list = data.eldely
+        const list = data.eldely;
         dispatch(setElders(list as Elder[]));
       } catch (error) {
-        console.error(error);
+        const isAppError = error instanceof AppError;
+        const title = isAppError
+          ? error.message
+          : "Erro ao buscar sua lista de idoso. Tente novamente mais tarde";
+        Alert.alert("Erro", title);
       } finally {
         setIsLoading(false);
       }
@@ -90,7 +94,6 @@ export default function Listas() {
           />
         )}
         contentContainerStyle={styles.listContent}
-        
         ListEmptyComponent={EmptyList}
       />
 
@@ -101,6 +104,7 @@ export default function Listas() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
+            gap: 10,
           },
         ]}
         onPress={() => router.push("/elder/register")}

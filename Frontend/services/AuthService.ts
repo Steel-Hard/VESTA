@@ -18,7 +18,7 @@ class AuthService {
   }
 
   public async signin(email: string, password: string):Promise<UserDTO> {
-    const { data } = await api.post("/users/signin", { email, password });
+    const { data } = await api.post<UserDTO>("/users/signin", { email, password });
 
     return data;
   }

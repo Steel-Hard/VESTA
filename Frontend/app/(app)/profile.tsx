@@ -6,6 +6,10 @@ import {
   useWindowDimensions,
   Alert,
   ScrollView,
+  ActivityIndicator,
+  Platform,
+  ToastAndroid,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useState } from "react";
 import Input from "@/components/Input/index";
@@ -20,7 +24,7 @@ import {
 } from "@/validation/profileValidation";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Loading from "@/components/Loading";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
   const SIZE = 150;
@@ -32,6 +36,7 @@ export default function Profile() {
   useWindowDimensions();
 
   const { updateUserProfile, user, signOut } = useAuth();
+  const router = useRouter();
 
   const {
     control,
@@ -66,32 +71,39 @@ export default function Profile() {
           photoSelected.assets[0].fileSize &&
           photoSelected.assets[0].fileSize / 1024 / 1024 > 5
         ) {
-          Alert.alert("Sua imagem é muito grande", "Escolha uma imagem até 5 Mb");
+          Alert.alert(
+            "Sua imagem é muito grande",
+            "Escolha uma imagem até 5 Mb"
+          );
           return;
         }
 
         const fileExtension = photoSelected.assets[0].uri.split(".").pop();
 
         const formData = new FormData();
-        formData.append('photo', {
-          name: `${user.name}.${fileExtension}`.toLowerCase().replace(/\s/g, ''),
+        formData.append("photo", {
+          name: `${user.name}.${fileExtension}`
+            .toLowerCase()
+            .replace(/\s/g, ""),
           uri: photoSelected.assets[0].uri,
-          type: `image/${fileExtension}`
+          type: `image/${fileExtension}`,
         } as any);
 
         const { data }: any = await api.patch("/auth/upload", formData, {
-          headers: { 
-            'Content-Type': 'multipart/form-data',
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
         });
 
         const userUpdated = { ...user, avatar: data.url };
         await updateUserProfile(userUpdated);
 
-        Alert.alert("Perfil Atualizado", "Sua foto de perfil foi atualizada com sucesso");
+        Alert.alert(
+          "Perfil Atualizado",
+          "Sua foto de perfil foi atualizada com sucesso"
+        );
       }
     } catch (error) {
-      console.log(error);
       const isAppError = error instanceof AppError;
 
       const title = isAppError
@@ -110,27 +122,42 @@ export default function Profile() {
 
       const userUpdated = { ...user, name: data.name };
 
-      await api.put("/users", data);
+      await api.put("/auth/updatePassword", {
+        email: user.email,
+        currentPassword: data.old_password,
+        newPassword: data.password,
+      });
+
       await updateUserProfile(userUpdated);
 
       Alert.alert(
         "Perfil Atualizado",
         "Seus dados de perfil foram atualizados com sucesso"
       );
-    } catch (error) {
+    } catch (error:any) {
       const isAppError = error instanceof AppError;
 
-      const title = isAppError
-        ? error.message
-        : "Não foi possível atualizar o perfil";
+      const title = "Não foi possível alterar senha. Tente novamente mais tarde";
 
       Alert.alert("Erro", title);
     } finally {
       setIsUpdating(false);
     }
   };
+  const handleError = (error: any) => {
+    if (Platform.OS === "android") {
+      Object.values(error).forEach((field: any) => {
+        ToastAndroid.show(field.message, ToastAndroid.SHORT);
+      });
+    }
+  };
 
   return (
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1, backgroundColor: "white" }}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+  >
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.headerContainer}>
         <UserPhoto
@@ -154,6 +181,7 @@ export default function Profile() {
           name="name"
           render={({ field: { onChange, value, onBlur } }) => (
             <Input
+              editable={false}
               placeholder="Nome"
               keyboardType="default"
               autoCapitalize="none"
@@ -165,72 +193,86 @@ export default function Profile() {
         />
 
         <Input placeholder="E-mail" editable={false} value={user.email} />
+        {user.authProvider === "local" && (
+          <View>
+            <Text style={styles.sectionTitle}>Alterar Senha</Text>
 
-        <Text style={styles.sectionTitle}>Alterar Senha</Text>
-
-        <Controller
-          control={control}
-          name="old_password"
-          render={({ field: { onChange, value, onBlur } }) => (
-            <Input
-              placeholder="Senha antiga"
-              secureTextEntry
-              autoCapitalize="none"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
+            <Controller
+              control={control}
+              name="old_password"
+              render={({ field: { onChange, value, onBlur } }) => (
+                <Input
+                  placeholder="Senha antiga"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, value, onBlur } }) => (
-            <Input
-              placeholder="Nova Senha"
-              secureTextEntry
-              autoCapitalize="none"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value, onBlur } }) => (
+                <Input
+                  placeholder="Nova Senha"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="confirm_password"
-          render={({ field: { onChange, value, onBlur } }) => (
-            <Input
-              placeholder="Confirme a nova senha"
-              secureTextEntry
-              autoCapitalize="none"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              returnKeyType="send"
-              onSubmitEditing={handleSubmit(handleProfileUpdate)}
+            <Controller
+              control={control}
+              name="confirm_password"
+              render={({ field: { onChange, value, onBlur } }) => (
+                <Input
+                  placeholder="Confirme a nova senha"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  returnKeyType="send"
+                  onSubmitEditing={handleSubmit(handleProfileUpdate)}
+                />
+              )}
             />
-          )}
-        />
 
-        <Pressable
-          onPress={handleSubmit(handleProfileUpdate)}
-          style={styles.updateButton}
-          disabled={isUpdating}
-        >
-          {isUpdating ? (
-            <Loading />
-          ) : (
-            <Text style={styles.buttonText}>Atualizar Perfil</Text>
-          )}
-        </Pressable>
+            <Pressable
+              onPress={handleSubmit(handleProfileUpdate, handleError)}
+              style={styles.updateButton}
+              disabled={isUpdating}
+            >
+              {isUpdating ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Salvar</Text>
+              )}
+            </Pressable>
+          </View>
+        )}
       </View>
-
-      <Pressable onPress={signOut} style={styles.signOutButton}>
+      <Pressable
+        onPress={async () => {
+          try {
+            await signOut();
+            // Navega para a tela de login após logout
+            router.replace("/(auth)/sign-in");
+          } catch (error) {
+            console.error("Erro ao fazer logout:", error);
+          }
+        }}
+        style={styles.signOutButton}
+      >
         <Text style={styles.signOutText}>Sair</Text>
       </Pressable>
     </ScrollView>
+        </KeyboardAvoidingView>
   );
 }

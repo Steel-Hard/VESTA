@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   },
   password: { type: String, min: 6, max: 12 },
   phoneNumber: { type: String, require: false },
+  pushToken: { type: String, require: false },
   eldely: [elderSchema],
   authProvider: {
     type: String,
